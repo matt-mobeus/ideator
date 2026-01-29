@@ -3,6 +3,8 @@
 // Persists network requests for execution when connectivity returns
 // ============================================================================
 
+import { db } from '../../backend/storage/database';
+
 /** A queued network request */
 export interface QueuedRequest {
   id: string;
@@ -14,35 +16,49 @@ export interface QueuedRequest {
 }
 
 export class RequestQueue {
-  /** Add a request to the queue */
-  async enqueue(_request: QueuedRequest): Promise<void> {
-    // TODO: Persist to IndexedDB via StorageService
-    // TODO: Duplicate detection
-    throw new Error('RequestQueue.enqueue not yet implemented');
+  /** Add a request to the queue (deduplicates by id) */
+  async enqueue(request: QueuedRequest): Promise<void> {
+    const existing = await db.offlineQueue.get(request.id);
+    if (existing) return;
+    await db.offlineQueue.put(request);
   }
 
-  /** Remove and return the next request */
+  /** Remove and return the next request (FIFO by createdAt) */
   async dequeue(): Promise<QueuedRequest | null> {
-    throw new Error('RequestQueue.dequeue not yet implemented');
+    const item = await db.offlineQueue.orderBy('createdAt').first();
+    if (!item) return null;
+    await db.offlineQueue.delete(item.id);
+    return item;
   }
 
   /** Peek at the next request without removing */
   async peek(): Promise<QueuedRequest | null> {
-    throw new Error('RequestQueue.peek not yet implemented');
+    const item = await db.offlineQueue.orderBy('createdAt').first();
+    return item ?? null;
   }
 
   /** Remove a specific request */
-  async remove(_id: string): Promise<void> {
-    throw new Error('RequestQueue.remove not yet implemented');
+  async remove(id: string): Promise<void> {
+    await db.offlineQueue.delete(id);
   }
 
-  /** Get all queued requests */
+  /** Get all queued requests ordered by creation time */
   async getAll(): Promise<QueuedRequest[]> {
-    throw new Error('RequestQueue.getAll not yet implemented');
+    return db.offlineQueue.orderBy('createdAt').toArray();
+  }
+
+  /** Get queue size */
+  async size(): Promise<number> {
+    return db.offlineQueue.count();
   }
 
   /** Clear the entire queue */
   async clear(): Promise<void> {
-    throw new Error('RequestQueue.clear not yet implemented');
+    await db.offlineQueue.clear();
+  }
+
+  /** Update a request (e.g. increment attempts, set lastError) */
+  async update(id: string, changes: Partial<QueuedRequest>): Promise<void> {
+    await db.offlineQueue.update(id, changes);
   }
 }
