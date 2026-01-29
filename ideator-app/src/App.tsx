@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AppShell } from './frontend/layout/AppShell';
+import { UploadScreen } from './frontend/screens/UploadScreen';
+import { ConceptsScreen } from './frontend/screens/ConceptsScreen';
+import { AnalysisScreen } from './frontend/screens/AnalysisScreen';
+import { ProvenanceScreen } from './frontend/screens/ProvenanceScreen';
+import { ResultsScreen } from './frontend/screens/ResultsScreen';
+import { ExplorerScreen } from './frontend/screens/ExplorerScreen';
+import { ToastProvider } from './frontend/contexts/ToastContext';
+import { AppStateProvider } from './frontend/contexts/AppStateContext';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <AppStateProvider>
+        <ToastProvider>
+          <AppShell>
+            <Routes>
+              <Route path="/" element={<Navigate to="/upload" replace />} />
+              <Route path="/upload" element={<UploadScreen />} />
+              <Route path="/concepts" element={<ConceptsScreen />} />
+              <Route path="/analyze/:conceptId" element={<AnalysisScreen />} />
+              <Route path="/provenance/:conceptId" element={<ProvenanceScreen />} />
+              <Route path="/results" element={<ResultsScreen />} />
+              <Route path="/explore/:conceptId" element={<ExplorerScreen />} />
+            </Routes>
+          </AppShell>
+        </ToastProvider>
+      </AppStateProvider>
+    </BrowserRouter>
+  );
 }
-
-export default App

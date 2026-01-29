@@ -1,68 +1,143 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   IDEATOR — Design Tokens (FE-1.1)
+   Tron-like wireframe aesthetic
+   ============================================================================ */
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* Backgrounds */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-tertiary: #1a1a2e;
+  --bg-surface: #16162a;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Grid */
+  --grid-color: rgba(26, 26, 46, 0.15);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  /* Accent colors */
+  --accent-nav: #00FFFF;
+  --accent-warning: #FF6600;
+  --accent-success: #00FF88;
+  --accent-creative: #FF00FF;
+  --accent-info: #4488FF;
+  --accent-neutral: #888899;
+  --accent-danger: #FF3344;
+
+  /* Text */
+  --text-primary: #FFFFFF;
+  --text-secondary: #AAAACC;
+  --text-tertiary: #666688;
+
+  /* Glow */
+  --glow-intensity: 0.6;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Border radius */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* Z-index scale */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  /* Typography */
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-heading: 'Rajdhani', 'Orbitron', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* Global reset & base styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Perspective grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: -1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-button:hover {
-  border-color: #646cff;
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+::-webkit-scrollbar-thumb {
+  background: var(--accent-neutral);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-nav);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+/* Selection */
+::selection {
+  background: rgba(0, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+/* Focus ring for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 2px;
+}
+
+/* Glow utility classes */
+.glow-cyan { box-shadow: 0 0 12px rgba(0, 255, 255, var(--glow-intensity)); }
+.glow-green { box-shadow: 0 0 12px rgba(0, 255, 136, var(--glow-intensity)); }
+.glow-magenta { box-shadow: 0 0 12px rgba(255, 0, 255, var(--glow-intensity)); }
+.glow-orange { box-shadow: 0 0 12px rgba(255, 102, 0, var(--glow-intensity)); }
+.glow-blue { box-shadow: 0 0 12px rgba(68, 136, 255, var(--glow-intensity)); }
+
+/* Animation utilities */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
