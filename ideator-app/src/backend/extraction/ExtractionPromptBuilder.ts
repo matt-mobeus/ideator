@@ -7,58 +7,117 @@ import type { Prompt } from '../../network/search/PromptService';
 
 /** A chunk of text with context for extraction */
 export interface TextChunk {
-  /** The text content */
   text: string;
-  /** Source file name */
   fileName: string;
-  /** Location within the source (page, section, etc.) */
   location: string;
-  /** Chunk index (for multi-chunk documents) */
   chunkIndex: number;
-  /** Total chunks for this document */
   totalChunks: number;
 }
 
+const DEFAULT_CHUNK_SIZE = 3000;
+const CHUNK_OVERLAP = 200;
+
 export class ExtractionPromptBuilder {
-  /**
-   * Chunk a document's text corpus for LLM processing.
-   * Uses overlap to preserve concept continuity across chunks.
-   */
-  chunkText(text: string, fileName: string, maxChunkSize?: number): TextChunk[] {
-    // TODO: Split text into chunks with configurable overlap
-    // TODO: Respect sentence boundaries
-    // TODO: Track location metadata
-    throw new Error('ExtractionPromptBuilder.chunkText not yet implemented');
+  chunkText(text: string, fileName: string, maxChunkSize = DEFAULT_CHUNK_SIZE): TextChunk[] {
+    if (!text || text.length === 0) return [];
+
+    const chunks: TextChunk[] = [];
+    let offset = 0;
+
+    while (offset < text.length) {
+      let end = Math.min(offset + maxChunkSize, text.length);
+
+      if (end < text.length) {
+        const lastSentence = text.lastIndexOf('. ', end);
+        if (lastSentence > offset + maxChunkSize * 0.5) {
+          end = lastSentence + 2;
+        }
+      }
+
+      chunks.push({
+        text: text.slice(offset, end),
+        fileName,
+        location: `chars ${offset}-${end}`,
+        chunkIndex: chunks.length,
+        totalChunks: 0,
+      });
+
+      offset = end - CHUNK_OVERLAP;
+      if (offset >= text.length) break;
+    }
+
+    for (const c of chunks) c.totalChunks = chunks.length;
+    return chunks;
   }
 
-  /**
-   * Build the extraction prompt for Pass 1: Entity Recognition.
-   * Identifies technologies, methods, principles from text.
-   */
   buildPass1Prompt(chunk: TextChunk): Prompt {
-    // TODO: System prompt for concept extraction
-    // TODO: User prompt with chunk text
-    // TODO: JSON output schema
-    throw new Error('ExtractionPromptBuilder.buildPass1Prompt not yet implemented');
+    return {
+      system: `You are a concept extraction engine. Identify distinct technologies, methods, principles, frameworks, and innovations from text. Extract concrete, specific concepts.
+
+For each concept provide: name (2-5 words), description (2-3 sentences), themes (1-3 tags), sourceExcerpts (exact quotes, max 2).
+
+Return a JSON array.`,
+      user: `Source: {{fileName}} (chunk {{chunkIndex}}/{{totalChunks}})
+Location: {{location}}
+
+TEXT:
+{{text}}
+
+Extract all distinct concepts. Return JSON array:
+[{"name":"Concept Name","description":"2-3 sentences","themes":["t1","t2"],"sourceExcerpts":[{"text":"exact quote","location":"{{location}}"}]}]`,
+      variables: {
+        fileName: chunk.fileName,
+        chunkIndex: String(chunk.chunkIndex + 1),
+        totalChunks: String(chunk.totalChunks),
+        location: chunk.location,
+        text: chunk.text,
+      },
+      jsonMode: true,
+      maxTokens: 4096,
+      temperature: 0.3,
+    };
   }
 
-  /**
-   * Build the prompt for Pass 2: Abstraction Level Assignment.
-   * Assigns L1/L2/L3 and identifies parent/child relationships.
-   */
   buildPass2Prompt(rawConcepts: unknown[]): Prompt {
-    // TODO: System prompt for abstraction mapping
-    // TODO: Include raw concepts from Pass 1
-    throw new Error('ExtractionPromptBuilder.buildPass2Prompt not yet implemented');
+    return {
+      system: `You are a concept classification engine. Assign each concept an abstraction level:
+- L1_SPECIFIC: Concrete technology/tool/method
+- L2_APPROACH: Methodology/framework/approach
+- L3_PARADIGM: High-level paradigm/field
+
+Also assign a domain and identify parent/child/related relationships.`,
+      user: `Classify these concepts:
+
+CONCEPTS:
+{{concepts}}
+
+Return JSON array:
+[{"name":"name","description":"desc","abstractionLevel":"L1_SPECIFIC|L2_APPROACH|L3_PARADIGM","domain":"domain","themes":["t1"],"parentConcept":"parent name or null","childConcepts":["names"],"relatedConcepts":["names"],"sourceExcerpts":[{"text":"q","location":"l"}]}]`,
+      variables: {
+        concepts: JSON.stringify(rawConcepts, null, 2),
+      },
+      jsonMode: true,
+      maxTokens: 8192,
+      temperature: 0.2,
+    };
   }
 
-  /**
-   * Build the prompt for Pass 3: Clustering.
-   * Groups concepts by theme/domain, detects cross-domain connections.
-   */
   buildPass3Prompt(conceptsWithLevels: unknown[]): Prompt {
-    // TODO: System prompt for clustering
-    // TODO: Include concepts with abstraction levels
-    throw new Error('ExtractionPromptBuilder.buildPass3Prompt not yet implemented');
+    return {
+      system: `You are a concept clustering engine. Group concepts into thematic clusters by domain. Each cluster should represent a coherent area of innovation.`,
+      user: `Group these concepts into clusters:
+
+CONCEPTS:
+{{concepts}}
+
+Return JSON:
+{"clusters":[{"name":"Cluster Name","summary":"1-2 sentence description","conceptNames":["c1","c2"]}]}`,
+      variables: {
+        concepts: JSON.stringify(conceptsWithLevels, null, 2),
+      },
+      jsonMode: true,
+      maxTokens: 4096,
+      temperature: 0.2,
+    };
   }
 }

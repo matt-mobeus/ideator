@@ -3,6 +3,8 @@
 // Abstracts web search — primary implementation uses Gemini grounding
 // ============================================================================
 
+import { GeminiClient } from '../clients/GeminiClient';
+
 /** Options for web search queries */
 export interface SearchOptions {
   /** Max results to return (default 10) */
@@ -40,12 +42,65 @@ export interface IWebSearchClient {
  * Uses Gemini's built-in Google Search grounding for market analysis queries.
  */
 export class GeminiWebSearchClient implements IWebSearchClient {
-  // TODO: Accept GeminiClient dependency
-  constructor() {}
+  private gemini: GeminiClient;
+
+  constructor(gemini: GeminiClient) {
+    this.gemini = gemini;
+  }
 
   async search(query: string, options?: SearchOptions): Promise<SearchResults> {
-    // TODO: Use GeminiClient.searchWithGrounding to perform grounded search
-    // Convert GroundedSearchResult to SearchResults format
-    throw new Error('GeminiWebSearchClient.search not yet implemented');
+    // Build a system instruction that incorporates filter options
+    let systemInstruction =
+      'You are a research assistant. Provide factual, well-sourced answers with specific data points, dates, and numbers when available.';
+
+    if (options?.dateRange && options.dateRange !== 'all') {
+      const ranges: Record<string, string> = {
+        day: 'the past 24 hours',
+        week: 'the past week',
+        month: 'the past month',
+        year: 'the past year',
+      };
+      systemInstruction += ` Focus on information from ${ranges[options.dateRange]}.`;
+    }
+
+    if (options?.domains && options.domains.length > 0) {
+      systemInstruction += ` Prioritize sources from: ${options.domains.join(', ')}.`;
+    }
+
+    const grounded = await this.gemini.searchWithGrounding(query, {
+      systemInstruction,
+    });
+
+    // Convert grounded results to normalized SearchResult format
+    const results: SearchResult[] = grounded.sources.map((src) => ({
+      title: src.title,
+      url: src.url,
+      snippet: src.snippet || grounded.content.slice(0, 200),
+      source: extractDomain(src.url),
+    }));
+
+    // Apply domain exclusions in post-processing
+    const filtered = options?.excludeDomains
+      ? results.filter(
+          (r) => !options.excludeDomains!.some((d) => r.url.includes(d))
+        )
+      : results;
+
+    // Limit results
+    const maxResults = options?.maxResults ?? 10;
+    const limited = filtered.slice(0, maxResults);
+
+    return {
+      results: limited,
+      totalEstimate: grounded.sources.length,
+    };
+  }
+}
+
+function extractDomain(url: string): string {
+  try {
+    return new URL(url).hostname.replace('www.', '');
+  } catch {
+    return url;
   }
 }

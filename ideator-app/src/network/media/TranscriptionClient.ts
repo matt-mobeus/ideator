@@ -1,29 +1,24 @@
 // ============================================================================
 // IDEATOR — Audio Transcription Client (NET-5.1)
-// Client for audio/video speech-to-text transcription
+// Client for audio/video speech-to-text transcription via Gemini multimodal
 // ============================================================================
+
+import { GeminiClient } from '../clients/GeminiClient';
+import { PromptService } from '../search/PromptService';
 
 /** A segment of transcribed audio with timestamps */
 export interface TranscriptionSegment {
-  /** Start time in seconds */
   start: number;
-  /** End time in seconds */
   end: number;
-  /** Transcribed text */
   text: string;
-  /** Confidence score (0-1) */
   confidence: number;
 }
 
 /** Full transcription result */
 export interface Transcription {
-  /** Full transcribed text */
   text: string;
-  /** Time-aligned segments */
   segments: TranscriptionSegment[];
-  /** Detected language */
   language: string;
-  /** Audio duration in seconds */
   duration: number;
 }
 
@@ -37,9 +32,7 @@ export interface TranscriptionJob {
 
 /** Options for transcription */
 export interface TranscriptionOptions {
-  /** Expected language (ISO 639-1) */
   language?: string;
-  /** Whether to include word-level timestamps */
   wordTimestamps?: boolean;
 }
 
@@ -55,19 +48,69 @@ export interface ITranscriptionClient {
  * Uses Gemini's multimodal capabilities for audio transcription.
  */
 export class GeminiTranscriptionClient implements ITranscriptionClient {
-  constructor() {}
+  private promptService: PromptService;
+  private jobs = new Map<string, TranscriptionJob>();
 
-  async transcribe(_audio: Blob, _options?: TranscriptionOptions): Promise<Transcription> {
-    // TODO: Use Gemini multimodal API to transcribe audio
-    throw new Error('GeminiTranscriptionClient.transcribe not yet implemented');
+  constructor(gemini: GeminiClient) {
+    this.promptService = new PromptService(gemini);
   }
 
-  async transcribeAsync(_audio: Blob, _options?: TranscriptionOptions): Promise<TranscriptionJob> {
-    // TODO: Implement async transcription for large files
-    throw new Error('GeminiTranscriptionClient.transcribeAsync not yet implemented');
+  async transcribe(audio: Blob, options?: TranscriptionOptions): Promise<Transcription> {
+    const languageHint = options?.language ? `The audio is in ${options.language}.` : '';
+
+    const response = await this.promptService.executeWithRetry({
+      system: 'You are a precise audio transcription service. Transcribe audio and return structured JSON.',
+      user: `Transcribe the following audio. ${languageHint}
+
+Return JSON:
+{
+  "text": "full transcribed text",
+  "segments": [{"start": 0.0, "end": 2.5, "text": "segment text", "confidence": 0.95}],
+  "language": "en",
+  "duration": 60.0
+}`,
+      jsonMode: true,
+      maxTokens: 8192,
+      temperature: 0.1,
+    });
+
+    const parsed = PromptService.extractJSON<Transcription>(response);
+    return {
+      text: parsed.text ?? '',
+      segments: (parsed.segments ?? []).map((s) => ({
+        start: Number(s.start) || 0,
+        end: Number(s.end) || 0,
+        text: s.text ?? '',
+        confidence: Number(s.confidence) || 0.5,
+      })),
+      language: parsed.language ?? 'en',
+      duration: Number(parsed.duration) || 0,
+    };
   }
 
-  async getJobStatus(_jobId: string): Promise<TranscriptionJob> {
-    throw new Error('GeminiTranscriptionClient.getJobStatus not yet implemented');
+  async transcribeAsync(audio: Blob, options?: TranscriptionOptions): Promise<TranscriptionJob> {
+    const jobId = crypto.randomUUID();
+    const job: TranscriptionJob = { jobId, status: 'queued' };
+    this.jobs.set(jobId, job);
+
+    // Fire and forget
+    (async () => {
+      job.status = 'processing';
+      try {
+        job.result = await this.transcribe(audio, options);
+        job.status = 'completed';
+      } catch (err) {
+        job.status = 'failed';
+        job.error = err instanceof Error ? err.message : 'Transcription failed';
+      }
+    })();
+
+    return job;
+  }
+
+  async getJobStatus(jobId: string): Promise<TranscriptionJob> {
+    const job = this.jobs.get(jobId);
+    if (!job) return { jobId, status: 'failed', error: 'Job not found' };
+    return { ...job };
   }
 }

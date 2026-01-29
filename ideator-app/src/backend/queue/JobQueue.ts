@@ -5,8 +5,9 @@
 
 import type { QueueJob } from '../../shared/types';
 import { JobStatus } from '../../shared/types';
+import { StorageService } from '../storage/StorageService';
+import { generateId } from '../../shared/utils';
 
-/** Events emitted by the job queue */
 export type QueueEvent =
   | { type: 'job_added'; job: QueueJob }
   | { type: 'job_started'; job: QueueJob }
@@ -18,51 +19,76 @@ export type QueueEventCallback = (event: QueueEvent) => void;
 
 export class JobQueue {
   private listeners: QueueEventCallback[] = [];
+  private storage: StorageService;
 
-  /** Add a concept to the analysis queue */
+  constructor(storage: StorageService) {
+    this.storage = storage;
+  }
+
   async add(conceptId: string, conceptName: string): Promise<QueueJob> {
-    // TODO: Create QueueJob record with QUEUED status
-    // TODO: Persist to StorageService
-    // TODO: Emit job_added event
-    // TODO: Trigger processing if queue was empty
-    throw new Error('JobQueue.add not yet implemented');
+    const job: QueueJob = {
+      id: generateId(),
+      conceptId,
+      conceptName,
+      status: JobStatus.QUEUED,
+      progress: 0,
+      queuedAt: new Date(),
+    };
+    await this.storage.saveQueueJob(job);
+    this.emit({ type: 'job_added', job });
+    return job;
   }
 
-  /** Cancel a queued (not processing) job */
   async cancel(jobId: string): Promise<boolean> {
-    // TODO: Only cancel if status is QUEUED (not PROCESSING)
-    // TODO: Remove from StorageService
-    // TODO: Emit job_cancelled event
-    throw new Error('JobQueue.cancel not yet implemented');
+    const jobs = await this.storage.getQueueJobs();
+    const job = jobs.find((j) => j.id === jobId);
+    if (!job || job.status !== JobStatus.QUEUED) return false;
+    await this.storage.deleteQueueJob(jobId);
+    this.emit({ type: 'job_cancelled', jobId });
+    return true;
   }
 
-  /** Get all jobs in the queue */
   async getAll(): Promise<QueueJob[]> {
-    // TODO: Fetch from StorageService, ordered by queuedAt
-    throw new Error('JobQueue.getAll not yet implemented');
+    return this.storage.getQueueJobs();
   }
 
-  /** Get the next queued job */
   async getNext(): Promise<QueueJob | undefined> {
-    // TODO: Return first job with QUEUED status
-    throw new Error('JobQueue.getNext not yet implemented');
+    const jobs = await this.storage.getQueueJobs();
+    return jobs.find((j) => j.status === JobStatus.QUEUED);
   }
 
-  /** Update a job's status and progress */
   async updateJob(jobId: string, updates: Partial<QueueJob>): Promise<void> {
-    // TODO: Update in StorageService
-    // TODO: Emit appropriate event
-    throw new Error('JobQueue.updateJob not yet implemented');
+    const jobs = await this.storage.getQueueJobs();
+    const job = jobs.find((j) => j.id === jobId);
+    if (!job) return;
+
+    const updated = { ...job, ...updates };
+    await this.storage.saveQueueJob(updated);
+
+    if (updates.status === JobStatus.PROCESSING) {
+      this.emit({ type: 'job_started', job: updated });
+    } else if (updates.status === JobStatus.COMPLETED) {
+      this.emit({ type: 'job_completed', job: updated });
+    } else if (updates.status === JobStatus.FAILED) {
+      this.emit({ type: 'job_failed', job: updated, error: updates.errorMessage ?? 'Unknown error' });
+    }
   }
 
-  /** Register event listener */
   onEvent(callback: QueueEventCallback): void {
     this.listeners.push(callback);
   }
 
-  /** Check if a concept is already queued or analyzed */
   async isConceptQueued(conceptId: string): Promise<boolean> {
-    // TODO: Check queue for existing job with this conceptId
-    throw new Error('JobQueue.isConceptQueued not yet implemented');
+    const jobs = await this.storage.getQueueJobs();
+    return jobs.some(
+      (j) => j.conceptId === conceptId &&
+        (j.status === JobStatus.QUEUED || j.status === JobStatus.PROCESSING)
+    );
+  }
+
+  private emit(event: QueueEvent): void {
+    for (const cb of this.listeners) {
+      try { cb(event); } catch { /* ignore */ }
+    }
   }
 }

@@ -59,9 +59,61 @@ export class StorageService {
   }
 
   async getConcepts(filters?: ConceptFilters): Promise<Concept[]> {
-    // TODO: Apply filters (abstraction level, domain, date range, search)
     if (!filters) return db.concepts.toArray();
-    throw new Error('StorageService.getConcepts with filters not yet implemented');
+
+    let results: Concept[];
+
+    // Start with an indexed field if possible for efficiency
+    if (filters.abstractionLevels && filters.abstractionLevels.length > 0) {
+      results = await db.concepts
+        .where('abstractionLevel')
+        .anyOf(filters.abstractionLevels)
+        .toArray();
+    } else if (filters.domains && filters.domains.length > 0) {
+      results = await db.concepts
+        .where('domain')
+        .anyOf(filters.domains)
+        .toArray();
+    } else {
+      results = await db.concepts.toArray();
+    }
+
+    // Apply remaining filters in memory
+    if (filters.abstractionLevels && filters.abstractionLevels.length > 0 && filters.domains) {
+      // If we indexed on abstraction, still need to filter domain
+      results = results.filter((c) => filters.domains!.includes(c.domain));
+    }
+    if (filters.domains && filters.domains.length > 0 && filters.abstractionLevels) {
+      // If we indexed on domain, still need to filter abstraction
+      results = results.filter((c) =>
+        filters.abstractionLevels!.includes(c.abstractionLevel)
+      );
+    }
+    if (filters.dateRange) {
+      const from = filters.dateRange.from.getTime();
+      const to = filters.dateRange.to.getTime();
+      results = results.filter((c) => {
+        const ts = new Date(c.extractionTimestamp).getTime();
+        return ts >= from && ts <= to;
+      });
+    }
+    if (filters.sourceFileIds && filters.sourceFileIds.length > 0) {
+      const ids = new Set(filters.sourceFileIds);
+      results = results.filter((c) =>
+        c.sourceReferences.some((ref) => ids.has(ref.fileId))
+      );
+    }
+    if (filters.searchQuery) {
+      const q = filters.searchQuery.toLowerCase();
+      results = results.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.description.toLowerCase().includes(q) ||
+          c.themes.some((t) => t.toLowerCase().includes(q))
+      );
+    }
+
+    return results;
   }
 
   async deleteConcept(id: string): Promise<void> {
@@ -96,8 +148,34 @@ export class StorageService {
 
   async getAnalyses(filters?: AnalysisFilters): Promise<AnalysisResult[]> {
     if (!filters) return db.analyses.toArray();
-    // TODO: Apply analysis-specific filters
-    throw new Error('StorageService.getAnalyses with filters not yet implemented');
+
+    let results = await db.analyses.toArray();
+
+    if (filters.validityTiers && filters.validityTiers.length > 0) {
+      const tiers = new Set(filters.validityTiers);
+      results = results.filter((a) => tiers.has(a.validityTier));
+    }
+    if (filters.scoreRange) {
+      results = results.filter(
+        (a) =>
+          a.compositeScore >= filters.scoreRange!.min &&
+          a.compositeScore <= filters.scoreRange!.max
+      );
+    }
+    // Cross-filter: if concept-level filters provided, load concepts and filter
+    if (
+      filters.abstractionLevels ||
+      filters.domains ||
+      filters.dateRange ||
+      filters.sourceFileIds ||
+      filters.searchQuery
+    ) {
+      const matchingConcepts = await this.getConcepts(filters);
+      const conceptIds = new Set(matchingConcepts.map((c) => c.id));
+      results = results.filter((a) => conceptIds.has(a.conceptId));
+    }
+
+    return results;
   }
 
   // --------------------------------------------------------------------------

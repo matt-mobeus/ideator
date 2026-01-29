@@ -1,52 +1,112 @@
-// ============================================================================
+// ================================================================
 // IDEATOR — Full-Text Search Index (BE-8.1)
 // Client-side search index for concepts, analyses, and assets
-// ============================================================================
+// ================================================================
 
-/** A search result with relevance score and highlights */
+import { StorageService } from '../storage/StorageService';
+
 export interface SearchHit {
-  /** ID of the matched record */
   id: string;
-  /** Type of record (concept, analysis, asset) */
   type: 'concept' | 'analysis' | 'asset';
-  /** Display name */
   name: string;
-  /** Snippet with match highlighting (HTML) */
   snippet: string;
-  /** Relevance score (higher is better) */
   score: number;
 }
 
+interface IndexEntry {
+  id: string;
+  type: 'concept' | 'analysis' | 'asset';
+  name: string;
+  tokens: string[];
+  text: string;
+}
+
 export class SearchIndex {
-  /**
-   * Rebuild the search index from current data.
-   * Indexes concept names, descriptions, themes, and domains.
-   */
+  private entries: IndexEntry[] = [];
+  private storage: StorageService;
+
+  constructor(storage: StorageService) {
+    this.storage = storage;
+  }
+
   async rebuild(): Promise<void> {
-    // TODO: Fetch all concepts from StorageService
-    // TODO: Build inverted index for searchable fields
-    // TODO: Support fuzzy matching
-    throw new Error('SearchIndex.rebuild not yet implemented');
+    this.entries = [];
+
+    const concepts = await this.storage.getConcepts();
+    for (const c of concepts) {
+      this.entries.push({
+        id: c.id,
+        type: 'concept',
+        name: c.name,
+        tokens: this.tokenize(`${c.name} ${c.description} ${c.themes.join(' ')} ${c.domain}`),
+        text: `${c.name} ${c.description} ${c.themes.join(' ')} ${c.domain}`,
+      });
+    }
   }
 
-  /**
-   * Add or update a single record in the index.
-   */
   async upsert(id: string, type: 'concept' | 'analysis' | 'asset', fields: Record<string, string>): Promise<void> {
-    // TODO: Update index entry
-    throw new Error('SearchIndex.upsert not yet implemented');
+    // Remove existing
+    this.entries = this.entries.filter((e) => !(e.id === id && e.type === type));
+
+    const text = Object.values(fields).join(' ');
+    this.entries.push({
+      id,
+      type,
+      name: fields['name'] ?? id,
+      tokens: this.tokenize(text),
+      text,
+    });
   }
 
-  /**
-   * Search the index.
-   * Returns results ranked by relevance with highlighted snippets.
-   */
-  async search(query: string, limit?: number): Promise<SearchHit[]> {
-    // TODO: Tokenize query
-    // TODO: Match against index
-    // TODO: Rank by relevance
-    // TODO: Generate highlighted snippets
-    // TODO: Return top N results
-    throw new Error('SearchIndex.search not yet implemented');
+  async search(query: string, limit = 20): Promise<SearchHit[]> {
+    const queryTokens = this.tokenize(query);
+    if (queryTokens.length === 0) return [];
+
+    const results: SearchHit[] = [];
+
+    for (const entry of this.entries) {
+      let score = 0;
+      for (const qt of queryTokens) {
+        for (const et of entry.tokens) {
+          if (et === qt) score += 10;
+          else if (et.startsWith(qt)) score += 5;
+          else if (et.includes(qt)) score += 2;
+        }
+      }
+
+      if (score > 0) {
+        const snippet = this.generateSnippet(entry.text, queryTokens);
+        results.push({ id: entry.id, type: entry.type, name: entry.name, snippet, score });
+      }
+    }
+
+    results.sort((a, b) => b.score - a.score);
+    return results.slice(0, limit);
+  }
+
+  private tokenize(text: string): string[] {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter((t) => t.length > 1);
+  }
+
+  private generateSnippet(text: string, queryTokens: string[]): string {
+    const lower = text.toLowerCase();
+    let bestStart = 0;
+    let bestScore = 0;
+
+    for (let i = 0; i < lower.length - 100; i += 20) {
+      const window = lower.slice(i, i + 200);
+      let s = 0;
+      for (const qt of queryTokens) {
+        if (window.includes(qt)) s++;
+      }
+      if (s > bestScore) { bestScore = s; bestStart = i; }
+    }
+
+    const snippet = text.slice(bestStart, bestStart + 200).trim();
+    return snippet.length < text.length ? `...${snippet}...` : snippet;
   }
 }

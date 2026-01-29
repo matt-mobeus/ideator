@@ -65,23 +65,22 @@ export class HttpClient {
     return this.request<T>('DELETE', url, undefined, options);
   }
 
-  // --------------------------------------------------------------------------
-  // Internal
-  // --------------------------------------------------------------------------
-
-  private async request<T>(
+  /**
+   * Make a request and return the raw Response object.
+   * Useful for streaming, blobs, or non-JSON responses.
+   */
+  async requestRaw(
     method: string,
     url: string,
     body?: unknown,
     options?: HttpRequestOptions
-  ): Promise<T> {
+  ): Promise<Response> {
     const fullUrl = this.baseUrl ? `${this.baseUrl}${url}` : url;
     const timeout = options?.timeout ?? this.defaultTimeout;
 
     const abortController = new AbortController();
     const timeoutId = setTimeout(() => abortController.abort(), timeout);
 
-    // Merge signals if caller provided one
     if (options?.signal) {
       options.signal.addEventListener('abort', () => abortController.abort());
     }
@@ -97,14 +96,12 @@ export class HttpClient {
     };
 
     try {
-      // Run request interceptors
       for (const interceptor of this.requestInterceptors) {
         init = await interceptor(fullUrl, init);
       }
 
       let response = await fetch(fullUrl, init);
 
-      // Run response interceptors
       for (const interceptor of this.responseInterceptors) {
         response = await interceptor(response);
       }
@@ -119,16 +116,29 @@ export class HttpClient {
         });
       }
 
-      const data = (await response.json()) as T;
-      return data;
+      clearTimeout(timeoutId);
+      return response;
     } catch (error) {
+      clearTimeout(timeoutId);
       if (error instanceof NetworkError) throw error;
       if ((error as Error).name === 'AbortError') {
         throw new TimeoutError('http', timeout);
       }
       throw normalizeError('http', error);
-    } finally {
-      clearTimeout(timeoutId);
     }
+  }
+
+  // --------------------------------------------------------------------------
+  // Internal
+  // --------------------------------------------------------------------------
+
+  private async request<T>(
+    method: string,
+    url: string,
+    body?: unknown,
+    options?: HttpRequestOptions
+  ): Promise<T> {
+    const response = await this.requestRaw(method, url, body, options);
+    return (await response.json()) as T;
   }
 }
