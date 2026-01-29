@@ -145,7 +145,7 @@ export function ResultsScreen() {
                 <h3 className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mb-2">Citations</h3>
                 <div className="space-y-1">
                   {selected.evidenceCitations.map((c, i) => (
-                    <p key={i} className="text-xs text-[var(--text-secondary)]">[{i + 1}] {c.source ?? JSON.stringify(c)}</p>
+                    <p key={i} className="text-xs text-[var(--text-secondary)]">[{i + 1}] {c.sourceTitle}: {c.snippet}</p>
                   ))}
                 </div>
               </div>

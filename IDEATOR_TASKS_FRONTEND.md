@@ -943,7 +943,7 @@ Implement 4+ level drill navigation.
 - [x] Breadcrumb trail: L0 > L1 > L2 > L3 > L4
 - [x] Each level clickable to jump back
 - [x] Current level highlighted
-- [ ] "Drill Down" button (label changes by context):
+- [x] "Drill Down" button (label changes by context):
   - L0→L1: "View Details"
   - L1→L2: "View Components"
   - L2→L3: "Technical Specs"
@@ -969,7 +969,7 @@ Implement 4+ level drill navigation.
 Implement right-side detail panel that adapts to drill level.
 
 **Deliverables:**
-- [ ] Panel content by level:
+- [x] Panel content by level:
   - L0: Cluster statistics
   - L1: Full report summary, validity scores
   - L2: Component details, relationships
@@ -1046,8 +1046,8 @@ Implement the central viewer canvas that hosts visualizations.
 Make viewer panels adapt to content type.
 
 **Deliverables:**
-- [ ] Content type detection
-- [ ] Panel configuration by type:
+- [x] Content type detection
+- [x] Panel configuration by type:
   - Concept Overview: summary + related list
   - Visualization: canvas + node detail
   - Analysis Report: scrollable text + citations
@@ -1117,7 +1117,7 @@ Implement the interactive node map using D3.js force simulation.
   - Person: circle, orange
   - Company: square, yellow
   - Event: diamond, white
-- [ ] Edge rendering by relationship type:
+- [x] Edge rendering by relationship type:
   - Created: solid arrow
   - Referenced: dotted
   - Funded: dashed
