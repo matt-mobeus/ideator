@@ -38,7 +38,7 @@ The backend team is responsible for all data processing, transformation, storage
 Design and implement the IndexedDB schema using Dexie.js wrapper.
 
 **Deliverables:**
-- [ ] Define schema for all 8 stores:
+- [x] Define schema for all 8 stores:
   - `files` — uploaded file metadata + blobs
   - `concepts` — extracted concept records
   - `analyses` — market analysis results
@@ -47,10 +47,10 @@ Design and implement the IndexedDB schema using Dexie.js wrapper.
   - `provenance` — source-to-claim mappings
   - `queue` — pending jobs
   - `settings` — user preferences
-- [ ] Implement Dexie.js database class with typed interfaces
-- [ ] Create migration strategy for schema versions
-- [ ] Implement CRUD operations for each store
-- [ ] Add indexing for searchable fields (concept name, domain, themes, dates)
+- [x] Implement Dexie.js database class with typed interfaces
+- [x] Create migration strategy for schema versions
+- [x] Implement CRUD operations for each store
+- [x] Add indexing for searchable fields (concept name, domain, themes, dates)
 
 **Acceptance Criteria:**
 - All stores created with proper typing
@@ -69,15 +69,15 @@ Design and implement the IndexedDB schema using Dexie.js wrapper.
 Define all TypeScript interfaces matching the specification data models.
 
 **Deliverables:**
-- [ ] `Concept` interface (id, name, description, abstraction_level, domain, themes, parent_concepts, child_concepts, related_concepts, source_references, extraction_timestamp, cluster_id)
-- [ ] `SourceRef` interface (file_id, file_name, location, excerpt, context)
-- [ ] `AnalysisResult` interface (concept_id, validity_tier, composite_score, market_viability, technical_feasibility, investment_potential, qualitative_report, evidence_citations, analyzed_timestamp)
-- [ ] `TimelineNode` interface
-- [ ] `TimelineEdge` interface
-- [ ] `GeneratedAsset` interface
-- [ ] `ProvenanceChain` and `Claim` interfaces
-- [ ] `QueueJob` interface
-- [ ] Enums: AbstractionLevel, ValidityTier, NodeType, EdgeType, AssetType
+- [x] `Concept` interface (id, name, description, abstraction_level, domain, themes, parent_concepts, child_concepts, related_concepts, source_references, extraction_timestamp, cluster_id)
+- [x] `SourceRef` interface (file_id, file_name, location, excerpt, context)
+- [x] `AnalysisResult` interface (concept_id, validity_tier, composite_score, market_viability, technical_feasibility, investment_potential, qualitative_report, evidence_citations, analyzed_timestamp)
+- [x] `TimelineNode` interface
+- [x] `TimelineEdge` interface
+- [x] `GeneratedAsset` interface
+- [x] `ProvenanceChain` and `Claim` interfaces
+- [x] `QueueJob` interface
+- [x] Enums: AbstractionLevel, ValidityTier, NodeType, EdgeType, AssetType
 
 **Acceptance Criteria:**
 - All interfaces match specification exactly
@@ -96,7 +96,7 @@ Define all TypeScript interfaces matching the specification data models.
 Create service layer abstracting IndexedDB operations.
 
 **Deliverables:**
-- [ ] `StorageService` class with methods:
+- [x] `StorageService` class with methods:
   - `saveFile(file: FileRecord): Promise<string>`
   - `getFile(id: string): Promise<FileRecord>`
   - `saveConcept(concept: Concept): Promise<string>`
@@ -104,9 +104,9 @@ Create service layer abstracting IndexedDB operations.
   - `saveAnalysis(analysis: AnalysisResult): Promise<string>`
   - `getAnalysis(conceptId: string): Promise<AnalysisResult>`
   - Similar for all other stores
-- [ ] Batch operations for bulk inserts
-- [ ] Transaction support for atomic operations
-- [ ] Storage quota monitoring utility
+- [x] Batch operations for bulk inserts
+- [x] Transaction support for atomic operations
+- [x] Storage quota monitoring utility
 
 **Acceptance Criteria:**
 - All CRUD operations abstracted
@@ -255,11 +255,11 @@ Coordinate file processing pipeline and output unified corpus.
 Build LLM prompts for concept extraction.
 
 **Deliverables:**
-- [ ] System prompt template for concept extraction
-- [ ] Chunking strategy for long documents (with overlap)
-- [ ] Context window management
-- [ ] Output schema definition (JSON format)
-- [ ] Prompt versioning system
+- [x] System prompt template for concept extraction
+- [x] Chunking strategy for long documents (with overlap)
+- [x] Context window management
+- [x] Output schema definition (JSON format)
+- [x] Prompt versioning system
 
 **Acceptance Criteria:**
 - Prompts produce consistent structured output
@@ -278,13 +278,13 @@ Build LLM prompts for concept extraction.
 Execute concept extraction via LLM API.
 
 **Deliverables:**
-- [ ] Multi-pass extraction:
+- [x] Multi-pass extraction:
   - Pass 1: Entity recognition (technologies, methods, principles)
   - Pass 2: Abstraction level assignment (L1/L2/L3)
   - Pass 3: Relationship mapping (parent/child/related)
-- [ ] Response parsing and validation
-- [ ] Deduplication logic (fuzzy matching)
-- [ ] Source reference linking
+- [x] Response parsing and validation
+- [x] Deduplication logic (fuzzy matching)
+- [x] Source reference linking
 
 **Acceptance Criteria:**
 - Extracts concepts at all 3 abstraction levels
@@ -304,11 +304,11 @@ Execute concept extraction via LLM API.
 Cluster extracted concepts by theme/domain.
 
 **Deliverables:**
-- [ ] Domain classification (Energy, Biotech, Transportation, etc.)
-- [ ] Theme tagging
-- [ ] Cluster assignment algorithm
-- [ ] Cross-domain relationship detection
-- [ ] Cluster metadata generation (name, count, summary)
+- [x] Domain classification (Energy, Biotech, Transportation, etc.)
+- [x] Theme tagging
+- [x] Cluster assignment algorithm
+- [x] Cross-domain relationship detection
+- [x] Cluster metadata generation (name, count, summary)
 
 **Acceptance Criteria:**
 - Concepts grouped into meaningful clusters
@@ -329,12 +329,12 @@ Cluster extracted concepts by theme/domain.
 Build LLM prompts for market analysis.
 
 **Deliverables:**
-- [ ] Market viability assessment prompt
-- [ ] Technical feasibility assessment prompt
-- [ ] Investment potential assessment prompt
-- [ ] Composite scoring prompt
-- [ ] Evidence citation requirements
-- [ ] Output schema (scores + qualitative analysis)
+- [x] Market viability assessment prompt
+- [x] Technical feasibility assessment prompt
+- [x] Investment potential assessment prompt
+- [x] Composite scoring prompt
+- [x] Evidence citation requirements
+- [x] Output schema (scores + qualitative analysis)
 
 **Acceptance Criteria:**
 - Prompts produce all required sub-scores
@@ -353,12 +353,12 @@ Build LLM prompts for market analysis.
 Execute market analysis workflow.
 
 **Deliverables:**
-- [ ] Web search query generation from concept
-- [ ] Search result aggregation and ranking
-- [ ] LLM analysis execution with search context
-- [ ] Score calculation and tier assignment
-- [ ] Qualitative report generation
-- [ ] Evidence linking to search results
+- [x] Web search query generation from concept
+- [x] Search result aggregation and ranking
+- [x] LLM analysis execution with search context
+- [x] Score calculation and tier assignment
+- [x] Qualitative report generation
+- [x] Evidence linking to search results
 
 **Acceptance Criteria:**
 - Produces valid scores (0-100) for all dimensions
@@ -378,13 +378,13 @@ Execute market analysis workflow.
 Calculate composite validity scores and tier assignments.
 
 **Deliverables:**
-- [ ] Weighted score calculation:
+- [x] Weighted score calculation:
   - Market Viability (factors: gap 30%, timing 25%, regulatory 20%, trends 25%)
   - Technical Feasibility (factors: readiness 35%, breakthroughs 25%, infrastructure 20%, talent 20%)
   - Investment Potential (factors: capital 25%, timeline 25%, exits 25%, climate 25%)
-- [ ] Composite score formula
-- [ ] Tier assignment (T1: 75-100, T2: 50-74, T3: 25-49, T4: 0-24)
-- [ ] Score normalization
+- [x] Composite score formula
+- [x] Tier assignment (T1: 75-100, T2: 50-74, T3: 25-49, T4: 0-24)
+- [x] Score normalization
 
 **Acceptance Criteria:**
 - Scores mathematically correct per weights
@@ -405,13 +405,13 @@ Calculate composite validity scores and tier assignments.
 Generate branching tree data structure for concept evolution.
 
 **Deliverables:**
-- [ ] Origin identification from source material
-- [ ] Evolution event extraction
-- [ ] Branching point detection (variations, derivatives)
-- [ ] Merge point detection (concept combinations)
-- [ ] Future projection node generation
-- [ ] Date/era assignment (exact, year, decade, estimated)
-- [ ] TimelineNode and TimelineEdge record creation
+- [x] Origin identification from source material
+- [x] Evolution event extraction
+- [x] Branching point detection (variations, derivatives)
+- [x] Merge point detection (concept combinations)
+- [x] Future projection node generation
+- [x] Date/era assignment (exact, year, decade, estimated)
+- [x] TimelineNode and TimelineEdge record creation
 
 **Acceptance Criteria:**
 - Tree structure is valid (no cycles except explicit merges)
@@ -431,17 +431,17 @@ Generate branching tree data structure for concept evolution.
 Generate interactive node map data structure.
 
 **Deliverables:**
-- [ ] Multi-type node creation:
+- [x] Multi-type node creation:
   - Concepts (from extraction)
   - Patents (from search)
   - Publications (from search)
   - People/Inventors (from extraction + search)
   - Companies/Orgs (from extraction + search)
   - Events/Milestones (from extraction + search)
-- [ ] Edge relationship mapping:
+- [x] Edge relationship mapping:
   - Created/Invented, Referenced/Cited, Funded/Invested, Employed/Affiliated, Competed/Opposed
-- [ ] Initial layout position calculation
-- [ ] Node importance scoring (for sizing)
+- [x] Initial layout position calculation
+- [x] Node importance scoring (for sizing)
 
 **Acceptance Criteria:**
 - All node types populated where data exists
@@ -463,16 +463,16 @@ Generate interactive node map data structure.
 Generate document assets from concept data.
 
 **Deliverables:**
-- [ ] Template system for each document type:
+- [x] Template system for each document type:
   - Executive Summary (PDF)
   - Pitch Deck (PDF/PPTX structure)
   - One-Pager (PDF)
   - Technical Brief (PDF)
   - Market Analysis Report (PDF)
   - Whitepaper (PDF)
-- [ ] LLM content generation with provenance markers
-- [ ] PDF generation library integration
-- [ ] Provenance chain attachment
+- [x] LLM content generation with provenance markers
+- [x] PDF generation library integration
+- [x] Provenance chain attachment
 
 **Acceptance Criteria:**
 - All 6 document types generatable
@@ -492,13 +492,13 @@ Generate document assets from concept data.
 Generate static visual assets.
 
 **Deliverables:**
-- [ ] Infographic generator (concept summary)
-- [ ] Concept diagram generator (relationships)
-- [ ] Timeline graphic export (from tree data)
-- [ ] Comparison chart generator
-- [ ] Data visualization generator (scores, trends)
-- [ ] SVG and PNG output support
-- [ ] Provenance linking for data-driven visuals
+- [x] Infographic generator (concept summary)
+- [x] Concept diagram generator (relationships)
+- [x] Timeline graphic export (from tree data)
+- [x] Comparison chart generator
+- [x] Data visualization generator (scores, trends)
+- [x] SVG and PNG output support
+- [x] Provenance linking for data-driven visuals
 
 **Acceptance Criteria:**
 - All 5 visual types generatable
@@ -518,11 +518,11 @@ Generate static visual assets.
 Track and store source-to-claim provenance chains.
 
 **Deliverables:**
-- [ ] Claim extraction from generated content
-- [ ] Source reference linking
-- [ ] Confidence scoring per claim
-- [ ] Synthesis notes generation
-- [ ] ProvenanceChain record persistence
+- [x] Claim extraction from generated content
+- [x] Source reference linking
+- [x] Confidence scoring per claim
+- [x] Synthesis notes generation
+- [x] ProvenanceChain record persistence
 
 **Acceptance Criteria:**
 - Every claim traceable to ≥1 source
@@ -543,11 +543,11 @@ Track and store source-to-claim provenance chains.
 Implement analysis job queue with persistence.
 
 **Deliverables:**
-- [ ] Queue data structure (FIFO)
-- [ ] Job states: QUEUED, PROCESSING, COMPLETED, FAILED
-- [ ] Persistence to IndexedDB (survives page reload)
-- [ ] Add/remove/reorder operations
-- [ ] Concurrency limit (1 active job)
+- [x] Queue data structure (FIFO)
+- [x] Job states: QUEUED, PROCESSING, COMPLETED, FAILED
+- [x] Persistence to IndexedDB (survives page reload)
+- [x] Add/remove/reorder operations
+- [x] Concurrency limit (1 active job)
 
 **Acceptance Criteria:**
 - Queue persists across sessions
@@ -567,16 +567,16 @@ Implement analysis job queue with persistence.
 Process queued analysis jobs.
 
 **Deliverables:**
-- [ ] Job executor with phase tracking:
+- [x] Job executor with phase tracking:
   1. "Searching market trends..."
   2. "Analyzing technical feasibility..."
   3. "Evaluating investment potential..."
   4. "Generating visualizations..."
   5. "Compiling report..."
-- [ ] Progress event emission (percentage + phase label)
-- [ ] Error handling with job failure state
-- [ ] Automatic advancement to next queued job
-- [ ] Offline detection and pause
+- [x] Progress event emission (percentage + phase label)
+- [x] Error handling with job failure state
+- [x] Automatic advancement to next queued job
+- [x] Offline detection and pause
 
 **Acceptance Criteria:**
 - Progress events emitted at each phase
@@ -598,11 +598,11 @@ Process queued analysis jobs.
 Implement client-side full-text search.
 
 **Deliverables:**
-- [ ] Search index builder (on concept save)
-- [ ] Indexed fields: name, description, themes, domain
-- [ ] Fuzzy matching support
-- [ ] Result ranking by relevance
-- [ ] Search highlighting data
+- [x] Search index builder (on concept save)
+- [x] Indexed fields: name, description, themes, domain
+- [x] Fuzzy matching support
+- [x] Result ranking by relevance
+- [x] Search highlighting data
 
 **Acceptance Criteria:**
 - Search returns in <500ms for 2000+ concepts
@@ -621,12 +621,12 @@ Implement client-side full-text search.
 Implement concept/result filtering.
 
 **Deliverables:**
-- [ ] Filter by abstraction level (L1/L2/L3)
-- [ ] Filter by domain (multi-select)
-- [ ] Filter by validity tier (T1/T2/T3/T4)
-- [ ] Filter by date range (ingested, analyzed)
-- [ ] Filter by source file
-- [ ] Compound filter logic (AND between categories)
+- [x] Filter by abstraction level (L1/L2/L3)
+- [x] Filter by domain (multi-select)
+- [x] Filter by validity tier (T1/T2/T3/T4)
+- [x] Filter by date range (ingested, analyzed)
+- [x] Filter by source file
+- [x] Compound filter logic (AND between categories)
 
 **Acceptance Criteria:**
 - All filter types functional
