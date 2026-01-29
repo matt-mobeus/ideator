@@ -41,7 +41,7 @@ The frontend team is responsible for all user interface implementation, includin
 Establish the design token system for the Tron-like wireframe aesthetic.
 
 **Deliverables:**
-- [ ] Color palette CSS variables:
+- [x] Color palette CSS variables:
   ```css
   --bg-primary: #0a0a0f;
   --bg-secondary: #12121a;
@@ -56,13 +56,13 @@ Establish the design token system for the Tron-like wireframe aesthetic.
   --text-secondary: #AAAACC;
   --glow-intensity: 0.6;
   ```
-- [ ] Typography scale (monospace/geometric sans):
+- [x] Typography scale (monospace/geometric sans):
   - Font family: JetBrains Mono (code), Rajdhani (headings), Inter (body fallback)
   - Size scale: 12/14/16/20/24/32/48px
-- [ ] Spacing scale: 4/8/12/16/24/32/48/64px
-- [ ] Border radius: 0 (sharp), 2px (subtle), 4px (cards)
-- [ ] Shadow/glow definitions for each accent color
-- [ ] Z-index scale for layering
+- [x] Spacing scale: 4/8/12/16/24/32/48/64px
+- [x] Border radius: 0 (sharp), 2px (subtle), 4px (cards)
+- [x] Shadow/glow definitions for each accent color
+- [x] Z-index scale for layering
 
 **Acceptance Criteria:**
 - All tokens exported as CSS custom properties
@@ -81,15 +81,15 @@ Establish the design token system for the Tron-like wireframe aesthetic.
 Build foundational UI primitives matching the design aesthetic.
 
 **Deliverables:**
-- [ ] **Button** — variants: primary (cyan glow), secondary (outline), danger (orange), creative (magenta)
+- [x] **Button** — variants: primary (cyan glow), secondary (outline), danger (orange), creative (magenta)
   - States: default, hover (glow intensify), active (scale 98%), disabled, loading
-- [ ] **Input** — text input with wireframe border, glow on focus
+- [x] **Input** — text input with wireframe border, glow on focus
 - [ ] **TextArea** — multi-line input
 - [ ] **Select/Dropdown** — custom styled dropdown
 - [ ] **Checkbox** — wireframe style with glow check
 - [ ] **Radio** — wireframe style
 - [ ] **Toggle** — on/off switch
-- [ ] **Badge** — small label (for abstraction level, tier)
+- [x] **Badge** — small label (for abstraction level, tier)
 - [ ] **Tag** — removable tag (for themes)
 - [ ] **Tooltip** — hover info display
 - [ ] **Icon** — icon wrapper with consistent sizing
@@ -112,11 +112,11 @@ Build foundational UI primitives matching the design aesthetic.
 Build composite UI components.
 
 **Deliverables:**
-- [ ] **Card** — wireframe bordered container with optional glow
-- [ ] **Modal** — overlay dialog with backdrop blur
-- [ ] **Toast** — notification popup (success/info/warning/error colors)
-- [ ] **Progress Bar** — segmented with phase labels, animated fill
-- [ ] **Skeleton** — loading placeholder with wireframe shimmer
+- [x] **Card** — wireframe bordered container with optional glow
+- [x] **Modal** — overlay dialog with backdrop blur
+- [x] **Toast** — notification popup (success/info/warning/error colors)
+- [x] **Progress Bar** — segmented with phase labels, animated fill
+- [x] **Skeleton** — loading placeholder with wireframe shimmer
 - [ ] **Accordion** — collapsible section (for clusters)
 - [ ] **Tabs** — tab switcher
 - [ ] **Breadcrumb** — navigation trail with separators
@@ -142,14 +142,14 @@ Build composite UI components.
 Define and implement subtle micro-interactions.
 
 **Deliverables:**
-- [ ] Hover state animations (glow intensify, 150ms ease)
-- [ ] Button press animation (scale 98% + pulse, 100ms)
+- [x] Hover state animations (glow intensify, 150ms ease)
+- [x] Button press animation (scale 98% + pulse, 100ms)
 - [ ] Page/screen transitions (fade + slide, 200ms ease-out)
 - [ ] List item stagger animation (50ms delay per item)
-- [ ] Loading spinner (pulsing glow)
+- [x] Loading spinner (pulsing glow)
 - [ ] Toast slide-in animation
-- [ ] Skeleton shimmer animation
-- [ ] Respect `prefers-reduced-motion` — disable all but essential
+- [x] Skeleton shimmer animation
+- [x] Respect `prefers-reduced-motion` — disable all but essential
 
 **Acceptance Criteria:**
 - Animations are subtle, not distracting
@@ -224,16 +224,16 @@ Implement offline viewing and upload queuing.
 Implement the persistent application shell.
 
 **Deliverables:**
-- [ ] Root layout with:
+- [x] Root layout with:
   - Perspective grid background (CSS)
   - Top navigation bar slot
   - Main content area
   - Toast container
-- [ ] Responsive breakpoints:
+- [x] Responsive breakpoints:
   - Desktop: ≥1024px (full layout)
   - Tablet: 768-1023px (adapted layout)
   - Mobile: <768px (unsupported message)
-- [ ] Mobile block screen ("Please use a desktop or tablet device")
+- [x] Mobile block screen ("Please use a desktop or tablet device")
 
 **Acceptance Criteria:**
 - Grid background renders correctly
@@ -254,9 +254,9 @@ Implement the persistent application shell.
 Implement persistent top navigation.
 
 **Deliverables:**
-- [ ] Logo/wordmark (click → concepts or upload if empty)
-- [ ] Global search trigger (opens modal, Cmd/Ctrl+K shortcut)
-- [ ] Settings button (opens settings modal)
+- [x] Logo/wordmark (click → concepts or upload if empty)
+- [x] Global search trigger (opens modal, Cmd/Ctrl+K shortcut)
+- [x] Settings button (opens settings modal)
 - [ ] Help button (opens help overlay)
 - [ ] Offline indicator (when disconnected)
 - [ ] Responsive collapse for tablet
@@ -278,13 +278,13 @@ Implement persistent top navigation.
 Implement global search overlay.
 
 **Deliverables:**
-- [ ] Modal with search input (auto-focus on open)
+- [x] Modal with search input (auto-focus on open)
 - [ ] Real-time results as user types (debounced 200ms)
 - [ ] Result categories (Concepts, Analyses, Assets)
 - [ ] Keyboard navigation (up/down arrows, Enter to select)
 - [ ] Result item: name, type badge, snippet with highlight
 - [ ] Click/Enter → navigate to item
-- [ ] Escape to close
+- [x] Escape to close
 
 **Acceptance Criteria:**
 - Results appear within 500ms
@@ -303,7 +303,7 @@ Implement global search overlay.
 Implement settings modal.
 
 **Deliverables:**
-- [ ] Sections:
+- [x] Sections:
   - Data: "Clear All Data" button with confirmation
   - Export: "Export Generated Assets" button
   - About: Version number, credits
@@ -326,15 +326,15 @@ Implement settings modal.
 Implement toast notification manager.
 
 **Deliverables:**
-- [ ] Toast container (bottom-right positioning)
-- [ ] Toast types with colors:
+- [x] Toast container (bottom-right positioning)
+- [x] Toast types with colors:
   - Success (green, 3s auto-dismiss)
   - Info (cyan, 4s auto-dismiss)
   - Warning (orange, 5s auto-dismiss)
   - Error (red, persistent until dismissed)
-- [ ] Stacking behavior (max 3 visible)
-- [ ] Manual dismiss button
-- [ ] Toast API: `toast.success()`, `toast.error()`, etc.
+- [x] Stacking behavior (max 3 visible)
+- [x] Manual dismiss button
+- [x] Toast API: `toast.success()`, `toast.error()`, etc.
 
 **Acceptance Criteria:**
 - Toasts stack correctly
@@ -377,9 +377,9 @@ Implement consistent loading patterns.
 Implement Screen 1 layout structure.
 
 **Deliverables:**
-- [ ] Page layout per wireframe spec
-- [ ] Route: `/upload`
-- [ ] Navigation from logo when no data exists
+- [x] Page layout per wireframe spec
+- [x] Route: `/upload`
+- [x] Navigation from logo when no data exists
 
 **Acceptance Criteria:**
 - Layout matches specification wireframe
@@ -505,8 +505,8 @@ Implement ingestion initiation and progress display.
 Implement Screen 2 layout structure.
 
 **Deliverables:**
-- [ ] Page layout per wireframe spec
-- [ ] Route: `/concepts`
+- [x] Page layout per wireframe spec
+- [x] Route: `/concepts`
 - [ ] Header with search, filters, concept count, "+ New" button
 
 **Acceptance Criteria:**
@@ -607,9 +607,9 @@ Implement filter controls.
 Implement Screen 3 layout structure.
 
 **Deliverables:**
-- [ ] Page layout per wireframe spec
-- [ ] Route: `/analyze/:conceptId`
-- [ ] Back navigation to concepts
+- [x] Page layout per wireframe spec
+- [x] Route: `/analyze/:conceptId`
+- [x] Back navigation to concepts
 
 **Acceptance Criteria:**
 - Layout matches specification wireframe
@@ -689,9 +689,9 @@ Implement analysis initiation and queue display.
 Implement Screen 4 layout structure.
 
 **Deliverables:**
-- [ ] Page layout per wireframe spec (split panel)
-- [ ] Route: `/provenance/:conceptId`
-- [ ] Back navigation
+- [x] Page layout per wireframe spec (split panel)
+- [x] Route: `/provenance/:conceptId`
+- [x] Back navigation
 
 **Acceptance Criteria:**
 - Split panel layout renders correctly
@@ -788,8 +788,8 @@ Implement asset generation interface.
 Implement Screen 5 layout structure.
 
 **Deliverables:**
-- [ ] Page layout per wireframe spec
-- [ ] Route: `/results`
+- [x] Page layout per wireframe spec
+- [x] Route: `/results`
 - [ ] Header with search, filters, sort, export
 
 **Acceptance Criteria:**
@@ -920,9 +920,9 @@ Implement asset export feature.
 Implement Screen 6 layout structure.
 
 **Deliverables:**
-- [ ] Page layout per wireframe spec (canvas + panel + strip)
-- [ ] Route: `/explore/:conceptId`
-- [ ] Breadcrumb navigation for drill levels
+- [x] Page layout per wireframe spec (canvas + panel + strip)
+- [x] Route: `/explore/:conceptId`
+- [x] Breadcrumb navigation for drill levels
 
 **Acceptance Criteria:**
 - Three-zone layout renders correctly
