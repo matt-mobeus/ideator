@@ -84,14 +84,14 @@ Build foundational UI primitives matching the design aesthetic.
 - [x] **Button** — variants: primary (cyan glow), secondary (outline), danger (orange), creative (magenta)
   - States: default, hover (glow intensify), active (scale 98%), disabled, loading
 - [x] **Input** — text input with wireframe border, glow on focus
-- [ ] **TextArea** — multi-line input
-- [ ] **Select/Dropdown** — custom styled dropdown
-- [ ] **Checkbox** — wireframe style with glow check
+- [x] **TextArea** — multi-line input
+- [x] **Select/Dropdown** — custom styled dropdown
+- [x] **Checkbox** — wireframe style with glow check
 - [ ] **Radio** — wireframe style
-- [ ] **Toggle** — on/off switch
+- [x] **Toggle** — on/off switch
 - [x] **Badge** — small label (for abstraction level, tier)
-- [ ] **Tag** — removable tag (for themes)
-- [ ] **Tooltip** — hover info display
+- [x] **Tag** — removable tag (for themes)
+- [x] **Tooltip** — hover info display
 - [ ] **Icon** — icon wrapper with consistent sizing
 
 **Acceptance Criteria:**
@@ -117,13 +117,13 @@ Build composite UI components.
 - [x] **Toast** — notification popup (success/info/warning/error colors)
 - [x] **Progress Bar** — segmented with phase labels, animated fill
 - [x] **Skeleton** — loading placeholder with wireframe shimmer
-- [ ] **Accordion** — collapsible section (for clusters)
-- [ ] **Tabs** — tab switcher
-- [ ] **Breadcrumb** — navigation trail with separators
-- [ ] **SearchInput** — input with search icon, clear button
-- [ ] **FilterDropdown** — multi-select filter with checkboxes
-- [ ] **EmptyState** — illustrated empty state with CTA
-- [ ] **ErrorState** — error display with retry button
+- [x] **Accordion** — collapsible section (for clusters)
+- [x] **Tabs** — tab switcher
+- [x] **Breadcrumb** — navigation trail with separators
+- [x] **SearchInput** — input with search icon, clear button
+- [x] **FilterDropdown** — multi-select filter with checkboxes
+- [x] **EmptyState** — illustrated empty state with CTA
+- [x] **ErrorState** — error display with retry button
 
 **Acceptance Criteria:**
 - Components composable and reusable
@@ -144,10 +144,10 @@ Define and implement subtle micro-interactions.
 **Deliverables:**
 - [x] Hover state animations (glow intensify, 150ms ease)
 - [x] Button press animation (scale 98% + pulse, 100ms)
-- [ ] Page/screen transitions (fade + slide, 200ms ease-out)
+- [x] Page/screen transitions (fade + slide, 200ms ease-out)
 - [ ] List item stagger animation (50ms delay per item)
 - [x] Loading spinner (pulsing glow)
-- [ ] Toast slide-in animation
+- [x] Toast slide-in animation
 - [x] Skeleton shimmer animation
 - [x] Respect `prefers-reduced-motion` — disable all but essential
 
@@ -259,7 +259,7 @@ Implement persistent top navigation.
 - [x] Settings button (opens settings modal)
 - [ ] Help button (opens help overlay)
 - [ ] Offline indicator (when disconnected)
-- [ ] Responsive collapse for tablet
+- [x] Responsive collapse for tablet
 
 **Acceptance Criteria:**
 - Logo navigation works correctly
@@ -279,11 +279,11 @@ Implement global search overlay.
 
 **Deliverables:**
 - [x] Modal with search input (auto-focus on open)
-- [ ] Real-time results as user types (debounced 200ms)
-- [ ] Result categories (Concepts, Analyses, Assets)
-- [ ] Keyboard navigation (up/down arrows, Enter to select)
-- [ ] Result item: name, type badge, snippet with highlight
-- [ ] Click/Enter → navigate to item
+- [x] Real-time results as user types (debounced 200ms)
+- [x] Result categories (Concepts, Analyses, Assets)
+- [x] Keyboard navigation (up/down arrows, Enter to select)
+- [x] Result item: name, type badge, snippet with highlight
+- [x] Click/Enter → navigate to item
 - [x] Escape to close
 
 **Acceptance Criteria:**
@@ -307,7 +307,7 @@ Implement settings modal.
   - Data: "Clear All Data" button with confirmation
   - Export: "Export Generated Assets" button
   - About: Version number, credits
-- [ ] Confirmation dialog for destructive actions
+- [x] Confirmation dialog for destructive actions
 
 **Acceptance Criteria:**
 - Clear data requires double confirmation
@@ -397,11 +397,11 @@ Implement Screen 1 layout structure.
 Implement file upload interface.
 
 **Deliverables:**
-- [ ] Drop zone with dashed wireframe border
-- [ ] Drag states: default, dragover (cyan glow), invalid (orange)
-- [ ] Click to open file picker
-- [ ] Multi-file selection
-- [ ] Format validation on drop:
+- [x] Drop zone with dashed wireframe border
+- [x] Drag states: default, dragover (cyan glow), invalid (orange)
+- [x] Click to open file picker
+- [x] Multi-file selection
+- [x] Format validation on drop:
   - Supported: add to queue
   - Unsupported: toast error with format name
 - [ ] File type icons (document, video, audio, image, data)
@@ -446,15 +446,15 @@ Implement Google Drive folder selection.
 Implement upload queue list.
 
 **Deliverables:**
-- [ ] Queue list with items:
+- [x] Queue list with items:
   - File icon (by type)
   - Filename (truncate with ellipsis)
   - File size (formatted: KB/MB/GB)
   - Remove button (×)
-- [ ] Running totals: file count, total size
-- [ ] "Clear All" button
-- [ ] Collapsed state when empty
-- [ ] Expanded state when files present
+- [x] Running totals: file count, total size
+- [x] "Clear All" button
+- [x] Collapsed state when empty
+- [x] Expanded state when files present
 
 **Acceptance Criteria:**
 - Items removable individually
@@ -473,18 +473,18 @@ Implement upload queue list.
 Implement ingestion initiation and progress display.
 
 **Deliverables:**
-- [ ] "Begin Ingestion" button:
+- [x] "Begin Ingestion" button:
   - Disabled when queue empty
   - Enabled with glow when files present
-- [ ] Processing overlay:
+- [x] Processing overlay:
   - File-by-file progress
   - Current file name
   - Overall percentage
   - Phase indicator
-- [ ] Error handling:
+- [x] Error handling:
   - Individual file failures shown
   - Option to continue with successful files
-- [ ] Auto-navigate to Screen 2 on completion
+- [x] Auto-navigate to Screen 2 on completion
 
 **Acceptance Criteria:**
 - Progress updates smoothly
@@ -507,7 +507,7 @@ Implement Screen 2 layout structure.
 **Deliverables:**
 - [x] Page layout per wireframe spec
 - [x] Route: `/concepts`
-- [ ] Header with search, filters, concept count, "+ New" button
+- [x] Header with search, filters, concept count, "+ New" button
 
 **Acceptance Criteria:**
 - Layout matches specification wireframe
@@ -525,14 +525,14 @@ Implement Screen 2 layout structure.
 Implement collapsible concept clusters.
 
 **Deliverables:**
-- [ ] Cluster header:
+- [x] Cluster header:
   - Domain/theme name
   - Concept count badge
   - Collapse/expand toggle
-- [ ] Horizontal scrollable concept row
+- [x] Horizontal scrollable concept row
 - [ ] "+N more" indicator for overflow
-- [ ] Collapsed state (header only)
-- [ ] Expanded state (shows cards)
+- [x] Collapsed state (header only)
+- [x] Expanded state (shows cards)
 - [ ] Staggered load animation for cards
 
 **Acceptance Criteria:**
@@ -552,14 +552,14 @@ Implement collapsible concept clusters.
 Implement concept preview card.
 
 **Deliverables:**
-- [ ] Fixed size: 180×220px
-- [ ] Content:
+- [x] Fixed size: 180×220px
+- [x] Content:
   - Concept name (max 2 lines, ellipsis)
   - Description (max 2 lines, ellipsis)
   - Abstraction level badge (L1/L2/L3)
   - Source count indicator
-- [ ] Hover state: subtle glow, reveal "Analyze →" button
-- [ ] Click: navigate to Screen 3
+- [x] Hover state: subtle glow, reveal "Analyze →" button
+- [x] Click: navigate to Screen 3
 
 **Acceptance Criteria:**
 - Card content truncates gracefully
@@ -578,15 +578,15 @@ Implement concept preview card.
 Implement filter controls.
 
 **Deliverables:**
-- [ ] Filter dropdown trigger button
+- [x] Filter dropdown trigger button
 - [ ] Filter panel with:
   - Abstraction level (checkboxes: L1, L2, L3)
   - Domain (multi-select dropdown)
   - Date ingested (date range picker)
   - Source file (multi-select dropdown)
 - [ ] Active filter count badge
-- [ ] "Clear Filters" button
-- [ ] Instant application (no "Apply" button needed)
+- [x] "Clear Filters" button
+- [x] Instant application (no "Apply" button needed)
 
 **Acceptance Criteria:**
 - Filters apply immediately
@@ -627,14 +627,14 @@ Implement Screen 3 layout structure.
 Implement full concept detail display.
 
 **Deliverables:**
-- [ ] Concept name (large heading)
-- [ ] Description (full text)
-- [ ] Metadata: abstraction level, domain, themes (as tags)
-- [ ] Source references list:
+- [x] Concept name (large heading)
+- [x] Description (full text)
+- [x] Metadata: abstraction level, domain, themes (as tags)
+- [x] Source references list:
   - Filename
   - Location (page, timestamp, slide)
   - Clickable → opens source preview overlay
-- [ ] Related concepts links (if any)
+- [x] Related concepts links (if any)
 
 **Acceptance Criteria:**
 - All concept data displayed
@@ -653,17 +653,17 @@ Implement full concept detail display.
 Implement analysis initiation and queue display.
 
 **Deliverables:**
-- [ ] "Run Market Analysis" button:
+- [x] "Run Market Analysis" button:
   - Prominent with magenta glow
   - Disabled if already queued/analyzed
   - Click → adds to queue
-- [ ] Analysis queue panel:
+- [x] Analysis queue panel:
   - List of queued/in-progress jobs
   - Active job: progress bar with phase label
   - Queued jobs: "Queued" status
   - Completed jobs: checkmark, clickable → Screen 5
   - Cancel button for queued (not active) jobs
-- [ ] Progress phases (from spec):
+- [x] Progress phases (from spec):
   1. "Searching market trends..."
   2. "Analyzing technical feasibility..."
   3. "Evaluating investment potential..."
@@ -709,13 +709,13 @@ Implement Screen 4 layout structure.
 Implement source material panel.
 
 **Deliverables:**
-- [ ] Grouped by source file (collapsible)
+- [x] Grouped by source file (collapsible)
 - [ ] Source excerpts:
   - Text excerpts with highlighting
   - Audio/video clips with inline playback controls
   - Page/timestamp indicators
-- [ ] Click excerpt → expand with more context
-- [ ] Hover → highlight connected claims
+- [x] Click excerpt → expand with more context
+- [x] Hover → highlight connected claims
 
 **Acceptance Criteria:**
 - Excerpts display correctly
@@ -734,14 +734,14 @@ Implement source material panel.
 Implement claims panel with visual connections.
 
 **Deliverables:**
-- [ ] List of generated claims
-- [ ] Confidence indicator per claim (color/opacity)
+- [x] List of generated claims
+- [x] Confidence indicator per claim (color/opacity)
 - [ ] Connection lines (SVG overlay):
   - Source excerpt ↔ claim linkage
   - Animated on hover
   - Color-coded by confidence
-- [ ] Click claim → highlight all supporting sources
-- [ ] Bidirectional highlighting
+- [x] Click claim → highlight all supporting sources
+- [x] Bidirectional highlighting
 
 **Acceptance Criteria:**
 - Lines render correctly across panels
@@ -760,11 +760,11 @@ Implement claims panel with visual connections.
 Implement asset generation interface.
 
 **Deliverables:**
-- [ ] Modal triggered by "Generate Assets" button
-- [ ] Asset type selector:
+- [x] Modal triggered by "Generate Assets" button
+- [x] Asset type selector:
   - Documents: Executive Summary, Pitch Deck, One-Pager, Technical Brief, Market Report, Whitepaper
   - Visuals: Infographic, Concept Diagram, Timeline, Comparison Chart, Data Viz
-- [ ] Generate button per type
+- [x] Generate button per type
 - [ ] Generation progress indicator
 - [ ] Preview on completion
 - [ ] Download button
@@ -790,7 +790,7 @@ Implement Screen 5 layout structure.
 **Deliverables:**
 - [x] Page layout per wireframe spec
 - [x] Route: `/results`
-- [ ] Header with search, filters, sort, export
+- [x] Header with search, filters, sort, export
 
 **Acceptance Criteria:**
 - Layout matches specification wireframe
@@ -808,14 +808,14 @@ Implement Screen 5 layout structure.
 Implement validity tier groupings.
 
 **Deliverables:**
-- [ ] Four tier sections:
+- [x] Four tier sections:
   - T1: High Potential (green header glow)
   - T2: Moderate Potential (yellow header glow)
   - T3: Low Potential (orange header glow)
   - T4: Not Viable (red header glow)
-- [ ] Collapsible accordion behavior
-- [ ] Count badge per tier
-- [ ] Default: T1 expanded, others collapsed
+- [x] Collapsible accordion behavior
+- [x] Count badge per tier
+- [x] Default: T1 expanded, others collapsed
 
 **Acceptance Criteria:**
 - Tiers color-coded correctly
@@ -834,16 +834,16 @@ Implement validity tier groupings.
 Implement analysis result card.
 
 **Deliverables:**
-- [ ] Card content:
+- [x] Card content:
   - Concept name
   - Domain badge
   - Score bar visualization (0-100 fill)
   - One-line summary excerpt
-- [ ] Quick action buttons:
+- [x] Quick action buttons:
   - "View Details" → slide-out panel
   - "Generate Assets" → asset modal
   - "Explore" → navigate to Screen 6
-- [ ] Hover: subtle elevation
+- [x] Hover: subtle elevation
 
 **Acceptance Criteria:**
 - Score bar fills proportionally
@@ -862,8 +862,8 @@ Implement analysis result card.
 Implement full report view in slide-out.
 
 **Deliverables:**
-- [ ] Slide-out panel (right side, 50% width)
-- [ ] Full qualitative report content:
+- [x] Slide-out panel (right side, 50% width)
+- [x] Full qualitative report content:
   - Executive summary
   - Market viability section + sub-scores
   - Technical feasibility section + sub-scores
@@ -871,7 +871,7 @@ Implement full report view in slide-out.
   - Key risks
   - Recommended next steps
   - Evidence citations (clickable)
-- [ ] Close button (× or click outside)
+- [x] Close button (× or click outside)
 
 **Acceptance Criteria:**
 - Panel slides smoothly
@@ -940,17 +940,17 @@ Implement Screen 6 layout structure.
 Implement 4+ level drill navigation.
 
 **Deliverables:**
-- [ ] Breadcrumb trail: L0 > L1 > L2 > L3 > L4
-- [ ] Each level clickable to jump back
-- [ ] Current level highlighted
+- [x] Breadcrumb trail: L0 > L1 > L2 > L3 > L4
+- [x] Each level clickable to jump back
+- [x] Current level highlighted
 - [ ] "Drill Down" button (label changes by context):
   - L0→L1: "View Details"
   - L1→L2: "View Components"
   - L2→L3: "Technical Specs"
   - L3→L4: "View Source"
-- [ ] Disabled at deepest available level
-- [ ] Back button (also Escape key)
-- [ ] Level badge indicator (L0/L1/L2/L3/L4)
+- [x] Disabled at deepest available level
+- [x] Back button (also Escape key)
+- [x] Level badge indicator (L0/L1/L2/L3/L4)
 
 **Acceptance Criteria:**
 - Navigation between all levels works
@@ -975,9 +975,9 @@ Implement right-side detail panel that adapts to drill level.
   - L2: Component details, relationships
   - L3: Technical data (adaptive depth)
   - L4: Source excerpt with full context
-- [ ] Selected node information (from visualization)
-- [ ] Related items links
-- [ ] "Drill Down" button integration
+- [x] Selected node information (from visualization)
+- [x] Related items links
+- [x] "Drill Down" button integration
 
 **Acceptance Criteria:**
 - Panel updates on level change
@@ -996,10 +996,10 @@ Implement right-side detail panel that adapts to drill level.
 Implement bottom source excerpts display.
 
 **Deliverables:**
-- [ ] Horizontally scrollable strip
-- [ ] Excerpt cards for current selection
-- [ ] Click card → drill to L4 (source view)
-- [ ] Empty state when no sources for selection
+- [x] Horizontally scrollable strip
+- [x] Excerpt cards for current selection
+- [x] Click card → drill to L4 (source view)
+- [x] Empty state when no sources for selection
 
 **Acceptance Criteria:**
 - Scroll works smoothly
@@ -1020,14 +1020,14 @@ Implement bottom source excerpts display.
 Implement the central viewer canvas that hosts visualizations.
 
 **Deliverables:**
-- [ ] Canvas container with:
+- [x] Canvas container with:
   - Primary panel (visualization)
   - Secondary panel (contextual info)
   - Tertiary strip (metadata/actions)
-- [ ] View toggle: Tree | Map
-- [ ] Zoom controls (+/−/reset)
+- [x] View toggle: Tree | Map
+- [x] Zoom controls (+/−/reset)
 - [ ] Fullscreen toggle
-- [ ] Canvas background (subtle grid)
+- [x] Canvas background (subtle grid)
 
 **Acceptance Criteria:**
 - Panels laid out correctly
@@ -1053,7 +1053,7 @@ Make viewer panels adapt to content type.
   - Analysis Report: scrollable text + citations
   - Source Material: document viewer + concepts sidebar
   - Generated Asset: preview + provenance
-- [ ] Smooth transition between configurations
+- [x] Smooth transition between configurations
 
 **Acceptance Criteria:**
 - Correct layout for each content type
@@ -1073,17 +1073,17 @@ Make viewer panels adapt to content type.
 Implement the branching tree/graph visualization using D3.js.
 
 **Deliverables:**
-- [ ] Tree layout algorithm (horizontal timeline)
-- [ ] Node rendering:
+- [x] Tree layout algorithm (horizontal timeline)
+- [x] Node rendering:
   - Size by significance score
   - Color by domain
   - Shape by node type (origin, variation, merge, current, projected)
   - Projected nodes: dashed outline
-- [ ] Edge rendering:
+- [x] Edge rendering:
   - Solid for confirmed relationships
   - Dashed for inferred/predicted
   - Thickness by strength
-- [ ] Interactions:
+- [x] Interactions:
   - Zoom (scroll wheel, pinch)
   - Pan (drag canvas)
   - Node click → select
@@ -1109,8 +1109,8 @@ Implement the branching tree/graph visualization using D3.js.
 Implement the interactive node map using D3.js force simulation.
 
 **Deliverables:**
-- [ ] Force-directed layout
-- [ ] Multi-type nodes:
+- [x] Force-directed layout
+- [x] Multi-type nodes:
   - Concept: hexagon, cyan
   - Patent: shield, magenta
   - Publication: document, green
@@ -1123,7 +1123,7 @@ Implement the interactive node map using D3.js force simulation.
   - Funded: dashed
   - Employed: thin solid
   - Competed: red dashed
-- [ ] Interactions:
+- [x] Interactions:
   - Zoom/pan
   - Click node → center + expand connections
   - Double-click → drill down
@@ -1153,10 +1153,10 @@ Implement the interactive node map using D3.js force simulation.
 Extract shared utilities for both visualizations.
 
 **Deliverables:**
-- [ ] Tooltip component (shared)
+- [x] Tooltip component (shared)
 - [ ] Context menu component (shared)
-- [ ] Zoom/pan controls (shared)
-- [ ] Color scale utilities
+- [x] Zoom/pan controls (shared)
+- [x] Color scale utilities
 - [ ] Export to image (PNG/SVG)
 - [ ] Minimap (optional, if canvas is large)
 
