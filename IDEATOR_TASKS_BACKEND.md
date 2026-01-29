@@ -127,11 +127,11 @@ Create service layer abstracting IndexedDB operations.
 Implement file type detection from uploaded files.
 
 **Deliverables:**
-- [ ] Magic byte detection for binary formats
-- [ ] Extension-based fallback detection
-- [ ] MIME type validation
-- [ ] Format categorization (TEXT, MULTIMEDIA, STRUCTURED)
-- [ ] Supported format whitelist enforcement
+- [x] Magic byte detection for binary formats
+- [x] Extension-based fallback detection
+- [x] MIME type validation
+- [x] Format categorization (TEXT, MULTIMEDIA, STRUCTURED)
+- [x] Supported format whitelist enforcement
 
 **Acceptance Criteria:**
 - Correctly identifies all 20+ supported formats
@@ -150,14 +150,14 @@ Implement file type detection from uploaded files.
 Extract text content from all supported document formats.
 
 **Deliverables:**
-- [ ] PDF text extraction (native + OCR fallback)
-- [ ] DOCX/DOC parsing
-- [ ] TXT/RTF/MD/HTML processing
-- [ ] EPUB extraction
-- [ ] LaTeX parsing
-- [ ] Patent document specialized parser
-- [ ] Page/section location tracking
-- [ ] Output: unified text corpus with location metadata
+- [x] PDF text extraction (native + OCR fallback)
+- [x] DOCX/DOC parsing
+- [x] TXT/RTF/MD/HTML processing
+- [x] EPUB extraction
+- [x] LaTeX parsing
+- [x] Patent document specialized parser
+- [x] Page/section location tracking
+- [x] Output: unified text corpus with location metadata
 
 **Acceptance Criteria:**
 - Extracts text from all specified formats
@@ -177,17 +177,17 @@ Extract text content from all supported document formats.
 Process video, audio, and presentation files.
 
 **Deliverables:**
-- [ ] Video processing pipeline:
+- [x] Video processing pipeline:
   - Audio track extraction
   - Frame sampling (configurable interval, default 1/second)
   - On-screen text detection via OCR
-- [ ] Audio transcription integration
-- [ ] Presentation extraction (PPTX, KEY):
+- [x] Audio transcription integration
+- [x] Presentation extraction (PPTX, KEY):
   - Slide content
   - Speaker notes
   - Embedded media
-- [ ] Image OCR for diagrams/screenshots
-- [ ] Timestamp/slide number tracking
+- [x] Image OCR for diagrams/screenshots
+- [x] Timestamp/slide number tracking
 
 **Acceptance Criteria:**
 - Transcription accuracy comparable to API provider
@@ -207,10 +207,10 @@ Process video, audio, and presentation files.
 Parse spreadsheets and JSON files.
 
 **Deliverables:**
-- [ ] XLSX/XLS/CSV parsing with header detection
-- [ ] JSON schema inference and flattening
-- [ ] Data-to-text conversion for concept extraction
-- [ ] Cell/row location tracking
+- [x] XLSX/XLS/CSV parsing with header detection
+- [x] JSON schema inference and flattening
+- [x] Data-to-text conversion for concept extraction
+- [x] Cell/row location tracking
 
 **Acceptance Criteria:**
 - Handles malformed CSVs gracefully
@@ -229,11 +229,11 @@ Parse spreadsheets and JSON files.
 Coordinate file processing pipeline and output unified corpus.
 
 **Deliverables:**
-- [ ] Web Worker setup for background processing
-- [ ] Pipeline coordinator routing files to correct processor
-- [ ] Progress event emission for UI updates
-- [ ] Unified text corpus builder
-- [ ] Error aggregation and partial success handling
+- [x] Web Worker setup for background processing
+- [x] Pipeline coordinator routing files to correct processor
+- [x] Progress event emission for UI updates
+- [x] Unified text corpus builder
+- [x] Error aggregation and partial success handling
 
 **Acceptance Criteria:**
 - Non-blocking main thread
