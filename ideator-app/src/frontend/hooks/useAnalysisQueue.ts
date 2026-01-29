@@ -33,13 +33,10 @@ export function useAnalysisQueue(storage?: StorageService): UseAnalysisQueueResu
     const job: QueueJob = {
       id: crypto.randomUUID(),
       conceptId,
+      conceptName: conceptId,
       status: JobStatus.QUEUED,
-      phase: null,
       progress: 0,
       queuedAt: new Date(),
-      startedAt: null,
-      completedAt: null,
-      error: null,
     };
     await svc.current.saveQueueJob(job);
     await refresh();

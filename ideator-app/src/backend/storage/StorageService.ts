@@ -228,6 +228,18 @@ export class StorageService {
     return db.assets.where('conceptId').equals(conceptId).toArray();
   }
 
+  async getAssets(conceptId: string): Promise<GeneratedAsset[]> {
+    return this.getAssetsByConcept(conceptId);
+  }
+
+  // --------------------------------------------------------------------------
+  // Provenance
+  // --------------------------------------------------------------------------
+
+  async getProvenance(conceptId: string): Promise<any[]> {
+    return db.provenance.where('conceptId').equals(conceptId).toArray();
+  }
+
   // --------------------------------------------------------------------------
   // Queue
   // --------------------------------------------------------------------------

@@ -1,3 +1,9 @@
 export { Button } from './Button';
 export { Input } from './Input';
+export { TextArea } from './TextArea';
+export { Select } from './Select';
+export { Checkbox } from './Checkbox';
+export { Toggle } from './Toggle';
 export { Badge } from './Badge';
+export { Tag } from './Tag';
+export { Tooltip } from './Tooltip';
