@@ -1,0 +1,12 @@
+export { extractConcepts, extractFromMultipleFiles } from './concept-extraction.service.ts';
+export { clusterConcepts, getClusteredConcepts } from './clustering.service.ts';
+export { buildExtractionPrompt, buildClusteringPrompt } from './prompt-builder.ts';
+export { enqueue, dequeue, updateProgress, complete, fail, cancel, getByStatus, getByTargetId, getPending, getRunning, clearCompleted } from './job-queue.service.ts';
+export { analyzeConcept, analyzeAndStore } from './market-analysis.service.ts';
+export { processNext, processAll, startProcessingLoop } from './job-processor.service.ts';
+export { calculateCompositeScore, scoreToGrade, tierLabel, tierColor } from './validity-scorer.ts';
+export { generateTimeline } from './timeline-data.service.ts';
+export { generateNodeMap, generateVisualizationData } from './node-map-data.service.ts';
+export { extractProvenance, storeProvenance } from './provenance-tracker.ts';
+export { generateDocument } from './document-generator.ts';
+export { generateVisual } from './visual-generator.ts';

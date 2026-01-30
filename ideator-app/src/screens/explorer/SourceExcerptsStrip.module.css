@@ -1,0 +1,60 @@
+.container {
+  height: 10rem;
+  border-top: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1rem;
+}
+
+.emptyContainer {
+  height: 10rem;
+  border-top: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.scrollContainer {
+  display: flex;
+  gap: 1rem;
+  height: 100%;
+}
+
+.excerptCard {
+  min-width: 16rem;
+  max-width: 20rem;
+  transition: all var(--duration-normal) var(--ease-default);
+  height: fit-content;
+}
+
+.excerptCardClickable {
+  cursor: pointer;
+}
+
+.excerptCardClickable:hover {
+  border-color: var(--color-cyan);
+  box-shadow: 0 0 0.5rem var(--color-cyan);
+}
+
+.fileName {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-cyan);
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.excerpt {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: var(--leading-tight);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}

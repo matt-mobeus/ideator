@@ -1,0 +1,10 @@
+.breadcrumbContainer {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.mainContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
