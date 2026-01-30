@@ -46,7 +46,7 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
         setActiveIndex((i) => Math.max(i - 1, 0))
       } else if (e.key === 'Enter' && results.length > 0) {
         e.preventDefault()
-        // TODO: navigate to selected concept
+        // TODO(#backlog): Navigate to selected concept using router when navigation integration is complete
         onClose()
       }
     },

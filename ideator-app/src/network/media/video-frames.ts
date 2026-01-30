@@ -1,3 +1,5 @@
+import { logger } from '@/utils/logger'
+
 export async function extractKeyFrames(
   videoBlob: Blob,
   maxFrames: number = 10
@@ -12,8 +14,8 @@ export async function extractKeyFrames(
   }
 
   // Stub implementation - ready for @ffmpeg/ffmpeg integration
-  // TODO: Implement actual video frame extraction using @ffmpeg/ffmpeg
-  console.warn(
+  // TODO(#backlog): Implement actual video frame extraction using @ffmpeg/ffmpeg when video processing library is ready
+  logger.warn(
     `Frame extraction requested for ${videoBlob.size} bytes, max frames: ${maxFrames}`
   )
 

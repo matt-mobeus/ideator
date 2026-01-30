@@ -1,6 +1,8 @@
 import type { FileFormat } from '@/types/file.ts'
 import * as pdfjsLib from 'pdfjs-dist'
+import type { TextItem } from 'pdfjs-dist/types/src/display/api'
 import mammoth from 'mammoth'
+import { logger } from '@/utils/logger'
 
 // Set worker src to empty string for inline worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = ''
@@ -35,19 +37,7 @@ export async function processTextFile(blob: Blob, format: FileFormat): Promise<s
 
 async function processHtml(blob: Blob): Promise<string> {
   const html = await blob.text()
-  // Strip HTML tags with regex
-  let text = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-  text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-  text = text.replace(/<[^>]+>/g, ' ')
-  text = text.replace(/&nbsp;/g, ' ')
-  text = text.replace(/&amp;/g, '&')
-  text = text.replace(/&lt;/g, '<')
-  text = text.replace(/&gt;/g, '>')
-  text = text.replace(/&quot;/g, '"')
-  text = text.replace(/&#39;/g, "'")
-  // Collapse multiple whitespaces
-  text = text.replace(/\s+/g, ' ').trim()
-  return text
+  return new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
 }
 
 async function processPdf(blob: Blob): Promise<string> {
@@ -63,7 +53,7 @@ async function processPdf(blob: Blob): Promise<string> {
     const page = await pdf.getPage(i)
     const textContent = await page.getTextContent()
     const pageText = textContent.items
-      .map((item: any) => item.str)
+      .map((item: TextItem) => item.str)
       .join(' ')
     textParts.push(pageText)
   }

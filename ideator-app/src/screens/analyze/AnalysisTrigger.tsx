@@ -17,7 +17,7 @@ export default function AnalysisTrigger({
   currentJob,
 }: AnalysisTriggerProps) {
   const handleAnalyze = () => {
-    // TODO: Call jobQueueService.enqueue('market_analysis', conceptId)
+    // TODO(#backlog): Integrate jobQueueService.enqueue('market_analysis', conceptId) when queue service is available
   }
 
   return (

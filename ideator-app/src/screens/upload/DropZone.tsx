@@ -1,6 +1,7 @@
-import { useState, useRef, type DragEvent, type ChangeEvent } from 'react'
+import { useState, useRef, type DragEvent, type ChangeEvent, type KeyboardEvent } from 'react'
 import { clsx } from 'clsx'
 import Icon from '@/components/ui/Icon.tsx'
+import { logger } from '@/utils/logger'
 
 interface DropZoneProps {
   onFilesAdded: (files: File[]) => void
@@ -67,6 +68,13 @@ export default function DropZone({ onFilesAdded }: DropZoneProps) {
     fileInputRef.current?.click()
   }
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      fileInputRef.current?.click()
+    }
+  }
+
   return (
     <div
       className={clsx(
@@ -75,10 +83,13 @@ export default function DropZone({ onFilesAdded }: DropZoneProps) {
           ? 'border-[var(--color-cyan)] bg-[rgba(0,255,255,0.05)] shadow-[var(--glow-cyan-lg)]'
           : 'border-[var(--border-default)] hover:border-[var(--color-cyan)] hover:shadow-[var(--glow-cyan-md)]',
       )}
+      role="button"
+      tabIndex={0}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
     >
       <input
         ref={fileInputRef}

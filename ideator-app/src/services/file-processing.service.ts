@@ -1,4 +1,8 @@
-import type { SourceFile } from '@/types/file.ts'
+import type { SourceFile, FileFormat } from '@/types/file.ts'
+import { processTextFile } from '@/workers/text-processor'
+import { logger } from '@/utils/logger'
+
+export type ProgressCallback = (progress: number, label: string) => void
 
 interface WorkerMessage {
   type: 'process'
@@ -63,7 +67,7 @@ class FileProcessingService {
     }
 
     this.worker.onerror = (error) => {
-      console.error('Worker error:', error)
+      logger.error('Worker error:', error)
       // Reject all pending requests
       for (const [fileId, request] of this.pendingRequests.entries()) {
         request.reject(new Error('Worker crashed'))
@@ -107,3 +111,76 @@ class FileProcessingService {
 }
 
 export const fileProcessingService = new FileProcessingService()
+
+/**
+ * Process a file with progress tracking (direct, non-worker version)
+ * @param file - File to process
+ * @param format - File format
+ * @param onProgress - Progress callback
+ * @returns Extracted text content
+ */
+export async function processFileWithProgress(
+  file: File,
+  format: FileFormat,
+  onProgress: ProgressCallback
+): Promise<string> {
+  try {
+    // Phase 1: Reading file (0-20%)
+    onProgress(0, 'Reading file...')
+    const blob = await readFileWithProgress(file, (readProgress) => {
+      onProgress(readProgress * 0.2, 'Reading file...')
+    })
+
+    // Phase 2: Parsing content (20-80%)
+    onProgress(20, 'Parsing content...')
+    const text = await processTextFile(blob, format)
+
+    // Phase 3: Finalizing (80-100%)
+    onProgress(80, 'Finalizing...')
+    await new Promise(resolve => setTimeout(resolve, 100)) // Brief pause for UI feedback
+    onProgress(100, 'Complete')
+
+    logger.info('File processed successfully', {
+      context: 'file-processing',
+      data: { fileName: file.name, format, textLength: text.length }
+    })
+
+    return text
+  } catch (error) {
+    logger.error('File processing failed', {
+      context: 'file-processing',
+      data: { fileName: file.name, format, error: String(error) }
+    })
+    throw error
+  }
+}
+
+/**
+ * Read a file as Blob with progress tracking
+ */
+async function readFileWithProgress(
+  file: File,
+  onProgress: (progress: number) => void
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const progress = event.loaded / event.total
+        onProgress(progress)
+      }
+    }
+
+    reader.onload = () => {
+      onProgress(1)
+      resolve(new Blob([reader.result as ArrayBuffer]))
+    }
+
+    reader.onerror = () => {
+      reject(new Error('Failed to read file'))
+    }
+
+    reader.readAsArrayBuffer(file)
+  })
+}

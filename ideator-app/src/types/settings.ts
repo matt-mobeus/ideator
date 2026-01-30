@@ -1,14 +1,19 @@
+import type { EncryptedValue } from '@/utils/crypto.ts'
+
 export type LlmProvider = 'openai' | 'anthropic'
+
+/** An API key field stored in IndexedDB — may be plaintext (legacy) or encrypted. */
+export type ApiKeyField = string | EncryptedValue | undefined
 
 export interface LlmConfig {
   provider: LlmProvider
-  apiKey: string
+  apiKey: ApiKeyField
   model: string
 }
 
 export interface SearchConfig {
   enabled: boolean
-  apiKey?: string
+  apiKey?: ApiKeyField
   provider?: string
 }
 

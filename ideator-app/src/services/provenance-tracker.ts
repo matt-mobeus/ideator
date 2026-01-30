@@ -4,6 +4,7 @@ import type { LlmProvider } from '@/network/llm/types.ts'
 import { executePrompt } from '@/network/prompt-execution.service.ts'
 import { storage } from '@/services/storage.service.ts'
 import type { ProvenanceRecord } from '@/db/database.ts'
+import { logger } from '@/utils/logger'
 
 interface RawClaim {
   statement: string
@@ -85,7 +86,7 @@ export async function extractProvenance(
       throw new Error('Expected array of claims')
     }
   } catch (err) {
-    console.error('Failed to parse provenance response:', err)
+    logger.error('Failed to parse provenance response:', err)
     return { claims: [] }
   }
 

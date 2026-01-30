@@ -4,7 +4,7 @@ import ProgressBar from '@/components/composites/ProgressBar.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Icon from '@/components/ui/Icon.tsx'
 import type { DocumentAssetType, VisualAssetType } from '@/types/asset.ts'
-// TODO: Wire up real services when concept/analysis data is available
+// TODO(#backlog): Wire up real services when concept/analysis data is available
 // import { generateDocument } from '@/services/document-generator.ts'
 // import { generateVisual } from '@/services/visual-generator.ts'
 
@@ -51,7 +51,7 @@ export default function AssetGenerationModal({
     setError(null)
 
     try {
-      // TODO: Get actual concept and analysis data
+      // TODO(#backlog): Get actual concept and analysis data from parent component props when data flow is implemented
       // For now, this is a placeholder that needs concept data from parent
       // const concept = await fetchConcept(conceptId)
       // const analysis = await fetchAnalysis(conceptId)
@@ -63,7 +63,7 @@ export default function AssetGenerationModal({
 
       // Generate asset using real services
       // const isDocument = DOCUMENT_TYPES.some(t => t.type === selectedType)
-      // const provider = { name: 'openai', apiKey: '' } // TODO: Get from settings
+      // const provider = { name: 'openai', apiKey: '' } // TODO(#backlog): Get from settings service when SettingsModal integration is complete
       // const asset = isDocument
       //   ? await generateDocument(selectedType as DocumentAssetType, concept, provider, analysis)
       //   : await generateVisual(selectedType as VisualAssetType, concept, provider, analysis)
@@ -203,7 +203,7 @@ export default function AssetGenerationModal({
             Cancel
           </Button>
           {completed && !error ? (
-            <Button variant="primary" onClick={() => {/* TODO: Implement download */}}>
+            <Button variant="primary" onClick={() => {/* TODO(#backlog): Implement download functionality when asset persistence is ready */}}>
               <Icon name="download" />
               Download
             </Button>

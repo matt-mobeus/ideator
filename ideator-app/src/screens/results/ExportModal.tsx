@@ -11,11 +11,11 @@ interface ExportModalProps {
 
 export default function ExportModal({ results, isOpen, onClose }: ExportModalProps) {
   const handleExportJSON = () => {
-    // TODO: Implement actual JSON export
+    // TODO(#backlog): Implement actual JSON export with proper formatting and file download when export utility is ready
   }
 
   const handleExportCSV = () => {
-    // TODO: Implement actual CSV export
+    // TODO(#backlog): Implement actual CSV export with column mapping when export utility is ready
   }
 
   return (

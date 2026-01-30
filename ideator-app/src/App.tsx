@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppShell, MobileBlock } from '@/components/layout'
 import { TopNav, SettingsModal } from '@/components/global'
+import { ErrorBoundary } from '@/components/global/ErrorBoundary'
 import UploadScreen from '@/screens/upload'
 import ConceptsScreen from '@/screens/concepts'
 import AnalyzeScreen from '@/screens/analyze/AnalyzeScreen.tsx'
@@ -13,40 +14,42 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   return (
-    <MobileBlock>
-      <BrowserRouter>
-        <AppShell>
-          <TopNav onSettingsClick={() => setSettingsOpen(true)} />
-          <main
-            className="flex-1 overflow-y-auto"
-            style={{ backgroundColor: 'var(--bg-primary)' }}
-          >
-            <Routes>
-              {/* Upload screen */}
-              <Route path="/upload" element={<UploadScreen />} />
+    <ErrorBoundary>
+      <MobileBlock>
+        <BrowserRouter>
+          <AppShell>
+            <TopNav onSettingsClick={() => setSettingsOpen(true)} />
+            <main
+              className="flex-1 overflow-y-auto"
+              style={{ backgroundColor: 'var(--bg-primary)' }}
+            >
+              <Routes>
+                {/* Upload screen */}
+                <Route path="/upload" element={<UploadScreen />} />
 
-              {/* Concepts screen */}
-              <Route path="/concepts" element={<ConceptsScreen />} />
+                {/* Concepts screen */}
+                <Route path="/concepts" element={<ConceptsScreen />} />
 
-              {/* Analyze screen (with ID param) */}
-              <Route path="/analyze/:id" element={<AnalyzeScreen />} />
+                {/* Analyze screen (with ID param) */}
+                <Route path="/analyze/:id" element={<AnalyzeScreen />} />
 
-              {/* Provenance screen (with ID param) */}
-              <Route path="/provenance/:id" element={<ProvenanceScreen />} />
+                {/* Provenance screen (with ID param) */}
+                <Route path="/provenance/:id" element={<ProvenanceScreen />} />
 
-              {/* Results screen */}
-              <Route path="/results" element={<ResultsScreen />} />
+                {/* Results screen */}
+                <Route path="/results" element={<ResultsScreen />} />
 
-              {/* Explore screen (with ID param) */}
-              <Route path="/explore/:id" element={<ExplorerScreen />} />
+                {/* Explore screen (with ID param) */}
+                <Route path="/explore/:id" element={<ExplorerScreen />} />
 
-              {/* Default redirect to upload */}
-              <Route path="/" element={<Navigate to="/upload" replace />} />
-            </Routes>
-          </main>
-          <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-        </AppShell>
-      </BrowserRouter>
-    </MobileBlock>
+                {/* Default redirect to upload */}
+                <Route path="/" element={<Navigate to="/upload" replace />} />
+              </Routes>
+            </main>
+            <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+          </AppShell>
+        </BrowserRouter>
+      </MobileBlock>
+    </ErrorBoundary>
   )
 }

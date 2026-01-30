@@ -8,23 +8,12 @@ import { buildClusteringPrompt } from './prompt-builder.ts'
 import { executePrompt } from '@/network/prompt-execution.service.ts'
 import { createLlmProvider } from '@/network/llm/index.ts'
 import { storage } from '@/services/storage.service.ts'
+import { parseJsonSafe } from '@/utils/json-parse.ts'
 
 interface RawCluster {
   name: string
   domain: string
   conceptNames: string[]
-}
-
-function parseJsonSafe<T>(raw: string): T {
-  try {
-    return JSON.parse(raw) as T
-  } catch {
-    const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/)
-    if (match?.[1]) {
-      return JSON.parse(match[1].trim()) as T
-    }
-    throw new Error('Failed to parse JSON from LLM response')
-  }
 }
 
 export async function clusterConcepts(

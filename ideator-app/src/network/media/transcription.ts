@@ -1,3 +1,5 @@
+import { logger } from '@/utils/logger'
+
 export async function transcribeAudio(
   audioBlob: Blob,
   apiKey: string,
@@ -13,8 +15,8 @@ export async function transcribeAudio(
   }
 
   // Stub implementation - ready for Whisper API integration
-  // TODO: Implement actual transcription using provider (e.g., OpenAI Whisper)
-  console.warn(
+  // TODO(#backlog): Implement actual transcription using OpenAI Whisper API when audio processing service is ready
+  logger.warn(
     `Transcription requested for ${audioBlob.size} bytes using provider: ${provider}`
   )
 

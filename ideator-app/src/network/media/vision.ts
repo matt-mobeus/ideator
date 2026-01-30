@@ -1,3 +1,5 @@
+import { logger } from '@/utils/logger'
+
 export async function analyzeImage(
   imageBlob: Blob,
   apiKey: string,
@@ -13,8 +15,8 @@ export async function analyzeImage(
   }
 
   // Stub implementation - ready for GPT-4V / Claude vision integration
-  // TODO: Implement actual vision analysis using provider (e.g., GPT-4V, Claude)
-  console.warn(
+  // TODO(#backlog): Implement actual vision analysis using provider (e.g., GPT-4V, Claude) when vision API integration is ready
+  logger.warn(
     `Vision analysis requested for ${imageBlob.size} bytes using provider: ${provider}`
   )
 

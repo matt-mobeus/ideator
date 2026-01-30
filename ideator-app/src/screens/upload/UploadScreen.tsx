@@ -4,8 +4,12 @@ import Icon from '@/components/ui/Icon.tsx'
 import DropZone from './DropZone.tsx'
 import UploadQueue from './UploadQueue.tsx'
 import IngestionProgress from './IngestionProgress.tsx'
+import { processFileWithProgress } from '@/services/file-processing.service'
+import type { FileFormat } from '@/types/file'
+import { logger } from '@/utils/logger'
 
 interface QueuedFile {
+  file: File
   name: string
   size: number
   format: string
@@ -26,6 +30,7 @@ export default function UploadScreen() {
 
   const handleFilesAdded = (files: File[]) => {
     const newFiles: QueuedFile[] = files.map((file) => ({
+      file,
       name: file.name,
       size: file.size,
       format: file.name.split('.').pop()?.toLowerCase() || 'unknown',
@@ -41,62 +46,73 @@ export default function UploadScreen() {
     setQueuedFiles([])
   }
 
-  const handleBeginIngestion = () => {
+  const handleBeginIngestion = async () => {
     setIsProcessing(true)
 
-    // Create mock jobs from queued files
+    // Create jobs from queued files
     const newJobs: IngestionJob[] = queuedFiles.map((file, index) => ({
       id: `job-${Date.now()}-${index}`,
       fileName: file.name,
-      status: 'running',
+      status: 'running' as const,
       progress: 0,
       progressLabel: 'Initializing...',
     }))
 
     setJobs(newJobs)
 
-    // Simulate progress for each job
-    newJobs.forEach((job, _jobIndex) => {
-      let progress = 0
-      const interval = setInterval(() => {
-        progress += Math.random() * 15 + 5 // Random increment between 5-20
+    // Process each file with real progress tracking
+    const processingPromises = queuedFiles.map(async (queuedFile, index) => {
+      const job = newJobs[index]
+      const format = queuedFile.format as FileFormat
 
-        if (progress >= 100) {
-          progress = 100
-          clearInterval(interval)
-
-          setJobs((prev) =>
-            prev.map((j) =>
-              j.id === job.id
-                ? { ...j, status: 'completed', progress: 100, progressLabel: 'Complete' }
-                : j
+      try {
+        await processFileWithProgress(
+          queuedFile.file,
+          format,
+          (progress, label) => {
+            setJobs((prev) =>
+              prev.map((j) =>
+                j.id === job.id
+                  ? { ...j, progress, progressLabel: label }
+                  : j
+              )
             )
-          )
+          }
+        )
 
-          // Check if all jobs are complete
-          setJobs((currentJobs) => {
-            const allComplete = currentJobs.every((j) => j.status === 'completed' || j.status === 'failed')
-            if (allComplete) {
-              setTimeout(() => {
-                setIsProcessing(false)
-                setQueuedFiles([])
-                setJobs([])
-              }, 2000)
-            }
-            return currentJobs
-          })
-        } else {
-          const stage = progress < 30 ? 'Parsing...' : progress < 60 ? 'Extracting...' : 'Analyzing...'
-          setJobs((prev) =>
-            prev.map((j) =>
-              j.id === job.id
-                ? { ...j, progress, progressLabel: stage }
-                : j
-            )
+        // Mark as completed
+        setJobs((prev) =>
+          prev.map((j) =>
+            j.id === job.id
+              ? { ...j, status: 'completed' as const, progress: 100, progressLabel: 'Complete' }
+              : j
           )
-        }
-      }, 500)
+        )
+      } catch (error) {
+        logger.error('File processing failed', {
+          context: 'upload-screen',
+          data: { fileName: queuedFile.name, error: String(error) }
+        })
+
+        setJobs((prev) =>
+          prev.map((j) =>
+            j.id === job.id
+              ? { ...j, status: 'failed' as const, progressLabel: 'Failed' }
+              : j
+          )
+        )
+      }
     })
+
+    // Wait for all files to complete
+    await Promise.all(processingPromises)
+
+    // Clean up after a brief delay
+    setTimeout(() => {
+      setIsProcessing(false)
+      setQueuedFiles([])
+      setJobs([])
+    }, 2000)
   }
 
   return (

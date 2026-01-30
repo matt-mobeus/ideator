@@ -5,7 +5,9 @@ import Input from '@/components/ui/Input.tsx'
 import Icon from '@/components/ui/Icon.tsx'
 import { db } from '@/db/database.ts'
 import { APP_CONFIG } from '@/config/app.config.ts'
-import type { AppSettings } from '@/types/settings.ts'
+import { encryptValue, decryptValue, isEncrypted } from '@/utils/crypto.ts'
+import { logger } from '@/utils/logger.ts'
+import type { AppSettings, ApiKeyField } from '@/types/settings.ts'
 import styles from './SettingsModal.module.css'
 
 interface SettingsModalProps {
@@ -15,8 +17,47 @@ interface SettingsModalProps {
 
 type Tab = 'api' | 'data' | 'about'
 
+/**
+ * Decrypt an ApiKeyField to a plaintext string.
+ * Handles legacy plaintext values and encrypted values transparently.
+ */
+async function decryptApiKey(field: ApiKeyField): Promise<string> {
+  if (!field) return ''
+  if (typeof field === 'string') return field
+  if (isEncrypted(field)) {
+    try {
+      return await decryptValue(field)
+    } catch (err) {
+      logger.error('Failed to decrypt API key — returning empty', { context: 'SettingsModal', data: err })
+      return ''
+    }
+  }
+  return ''
+}
+
+/**
+ * Encrypt all API key fields on an AppSettings object before persisting.
+ * Also migrates any legacy plaintext keys to encrypted form.
+ */
+async function encryptSettings(settings: AppSettings): Promise<AppSettings> {
+  const llmKey = typeof settings.llm.apiKey === 'string'
+    ? await encryptValue(settings.llm.apiKey)
+    : settings.llm.apiKey
+
+  const searchKey = typeof settings.search.apiKey === 'string'
+    ? await encryptValue(settings.search.apiKey)
+    : settings.search.apiKey
+
+  return {
+    ...settings,
+    llm: { ...settings.llm, apiKey: llmKey ?? '' },
+    search: { ...settings.search, apiKey: searchKey ?? undefined },
+  }
+}
+
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<Tab>('api')
+  // In-memory settings always hold *plaintext* keys for the form.
   const [settings, setSettings] = useState<AppSettings | null>(null)
   const [loading, setLoading] = useState(false)
   const [storageUsage, setStorageUsage] = useState<{ used: number; quota: number } | null>(null)
@@ -46,7 +87,31 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     try {
       const allSettings = await db.settings.toArray()
       if (allSettings.length > 0) {
-        setSettings(allSettings[0])
+        const raw = allSettings[0]
+        // Decrypt API keys into plaintext for in-memory use
+        const llmKeyPlain = await decryptApiKey(raw.llm.apiKey)
+        const searchKeyPlain = await decryptApiKey(raw.search.apiKey)
+
+        // Migrate legacy plaintext keys: if they were strings, re-encrypt and persist
+        const needsMigration =
+          (typeof raw.llm.apiKey === 'string' && raw.llm.apiKey !== '') ||
+          (typeof raw.search.apiKey === 'string' && raw.search.apiKey !== '')
+
+        if (needsMigration) {
+          logger.info('Migrating plaintext API keys to encrypted storage', { context: 'SettingsModal' })
+          const encrypted = await encryptSettings({
+            ...raw,
+            llm: { ...raw.llm, apiKey: llmKeyPlain },
+            search: { ...raw.search, apiKey: searchKeyPlain },
+          })
+          await db.settings.update(raw.id, { ...encrypted, updatedAt: new Date() })
+        }
+
+        setSettings({
+          ...raw,
+          llm: { ...raw.llm, apiKey: llmKeyPlain },
+          search: { ...raw.search, apiKey: searchKeyPlain },
+        })
       } else {
         // Create default settings if none exist
         const newSettings: AppSettings = {
@@ -68,7 +133,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         setSettings(newSettings)
       }
     } catch (error) {
-      console.error('Failed to load settings:', error)
+      logger.error('Failed to load settings', { context: 'SettingsModal', data: error })
     }
   }
 
@@ -81,7 +146,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           quota: estimate.quota || 0,
         })
       } catch (error) {
-        console.error('Failed to estimate storage:', error)
+        logger.error('Failed to estimate storage', { context: 'SettingsModal', data: error })
       }
     }
   }
@@ -90,13 +155,15 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     if (!settings) return
     setLoading(true)
     try {
+      // Encrypt before persisting
+      const encrypted = await encryptSettings(settings)
       await db.settings.update(settings.id, {
-        ...settings,
+        ...encrypted,
         updatedAt: new Date(),
       })
       onClose()
     } catch (error) {
-      console.error('Failed to save settings:', error)
+      logger.error('Failed to save settings', { context: 'SettingsModal', data: error })
     } finally {
       setLoading(false)
     }
@@ -127,7 +194,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       setDeleteStep(0)
       await loadStorageUsage()
     } catch (error) {
-      console.error('Failed to clear data:', error)
+      logger.error('Failed to clear data', { context: 'SettingsModal', data: error })
     } finally {
       setLoading(false)
     }
@@ -174,9 +241,18 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
   const getApiKeyValue = (field: 'openai' | 'anthropic' | 'serper') => {
     if (!settings) return ''
-    if (field === 'serper') return settings.search.apiKey || ''
-    if (field === 'openai') return settings.llm.provider === 'openai' ? settings.llm.apiKey : ''
-    if (field === 'anthropic') return settings.llm.provider === 'anthropic' ? settings.llm.apiKey : ''
+    if (field === 'serper') {
+      const v = settings.search.apiKey
+      return typeof v === 'string' ? v : ''
+    }
+    if (field === 'openai') {
+      const v = settings.llm.provider === 'openai' ? settings.llm.apiKey : ''
+      return typeof v === 'string' ? v : ''
+    }
+    if (field === 'anthropic') {
+      const v = settings.llm.provider === 'anthropic' ? settings.llm.apiKey : ''
+      return typeof v === 'string' ? v : ''
+    }
     return ''
   }
 
@@ -209,7 +285,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         {activeTab === 'api' && (
           <div className={styles.apiTab}>
             <p className={styles.apiDescription}>
-              Configure API keys for LLM and search providers. Keys are stored locally in your browser.
+              Configure API keys for LLM and search providers. Keys are encrypted and stored locally in your browser.
             </p>
 
             {/* OpenAI API Key */}

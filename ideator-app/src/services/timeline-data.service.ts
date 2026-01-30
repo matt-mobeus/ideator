@@ -8,6 +8,7 @@ import type {
 } from '@/types/visualization.ts'
 import type { LlmProvider } from '@/network/llm/types.ts'
 import { executePrompt } from '@/network/prompt-execution.service.ts'
+import { logger } from '@/utils/logger'
 
 interface TimelinePromptNode {
   label: string
@@ -109,7 +110,7 @@ export async function generateTimeline(
         const targetId = labelToId.get(edge.targetLabel)
 
         if (!sourceId || !targetId) {
-          console.warn(
+          logger.warn(
             `Timeline edge references unknown node: ${edge.sourceLabel} -> ${edge.targetLabel}`,
           )
           return null
@@ -129,7 +130,7 @@ export async function generateTimeline(
 
     return { nodes, edges }
   } catch (error) {
-    console.error('Failed to generate timeline:', error)
+    logger.error('Failed to generate timeline:', error)
     throw new Error(
       `Timeline generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     )

@@ -11,6 +11,7 @@ import { executePrompt } from '@/network/prompt-execution.service.ts'
 import { searchWeb } from '@/network/search/index.ts'
 import { storage } from '@/services/storage.service.ts'
 import { generateTimeline } from '@/services/timeline-data.service.ts'
+import { logger } from '@/utils/logger'
 
 interface NodeMapPromptNode {
   label: string
@@ -91,7 +92,7 @@ export async function generateNodeMap(
           .join('\n')
       }
     } catch (error) {
-      console.warn('Web search failed, continuing without context:', error)
+      logger.warn('Web search failed, continuing without context:', error)
     }
 
     const { system, user } = buildNodeMapPrompt(concept, searchContext)
@@ -128,7 +129,7 @@ export async function generateNodeMap(
         const targetId = labelToId.get(edge.targetLabel)
 
         if (!sourceId || !targetId) {
-          console.warn(
+          logger.warn(
             `Node map edge references unknown node: ${edge.sourceLabel} -> ${edge.targetLabel}`,
           )
           return null
@@ -146,7 +147,7 @@ export async function generateNodeMap(
 
     return { nodes, edges }
   } catch (error) {
-    console.error('Failed to generate node map:', error)
+    logger.error('Failed to generate node map:', error)
     throw new Error(
       `Node map generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     )
@@ -179,7 +180,7 @@ export async function generateVisualizationData(
 
     return visualizationData
   } catch (error) {
-    console.error('Failed to generate visualization data:', error)
+    logger.error('Failed to generate visualization data:', error)
     throw new Error(
       `Visualization data generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     )
