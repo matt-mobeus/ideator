@@ -1,6 +1,6 @@
 import type { EncryptedValue } from '@/utils/crypto.ts'
 
-export type LlmProvider = 'openai' | 'anthropic'
+export type LlmProvider = 'openai' | 'anthropic' | 'gemini'
 
 /** An API key field stored in IndexedDB — may be plaintext (legacy) or encrypted. */
 export type ApiKeyField = string | EncryptedValue | undefined
@@ -28,9 +28,9 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: Omit<AppSettings, 'id' | 'createdAt' | 'updatedAt'> = {
   llm: {
-    provider: 'openai',
+    provider: 'gemini',
     apiKey: '',
-    model: 'gpt-4o',
+    model: 'gemini-2.0-flash',
   },
   search: {
     enabled: false,

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppShell, MobileBlock } from '@/components/layout'
-import { TopNav, SettingsModal } from '@/components/global'
+import { TopNav, SettingsModal, PageLayout } from '@/components/global'
 import { ErrorBoundary } from '@/components/global/ErrorBoundary'
 import UploadScreen from '@/screens/upload'
 import ConceptsScreen from '@/screens/concepts'
@@ -25,22 +25,22 @@ export default function App() {
             >
               <Routes>
                 {/* Upload screen */}
-                <Route path="/upload" element={<UploadScreen />} />
+                <Route path="/upload" element={<PageLayout><UploadScreen /></PageLayout>} />
 
                 {/* Concepts screen */}
-                <Route path="/concepts" element={<ConceptsScreen />} />
+                <Route path="/concepts" element={<PageLayout><ConceptsScreen /></PageLayout>} />
 
                 {/* Analyze screen (with ID param) */}
-                <Route path="/analyze/:id" element={<AnalyzeScreen />} />
+                <Route path="/analyze/:id" element={<PageLayout><AnalyzeScreen /></PageLayout>} />
 
                 {/* Provenance screen (with ID param) */}
-                <Route path="/provenance/:id" element={<ProvenanceScreen />} />
+                <Route path="/provenance/:id" element={<PageLayout><ProvenanceScreen /></PageLayout>} />
 
                 {/* Results screen */}
-                <Route path="/results" element={<ResultsScreen />} />
+                <Route path="/results" element={<PageLayout><ResultsScreen /></PageLayout>} />
 
                 {/* Explore screen (with ID param) */}
-                <Route path="/explore/:id" element={<ExplorerScreen />} />
+                <Route path="/explore/:id" element={<PageLayout variant="full"><ExplorerScreen /></PageLayout>} />
 
                 {/* Default redirect to upload */}
                 <Route path="/" element={<Navigate to="/upload" replace />} />

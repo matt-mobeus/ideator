@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Button from '@/components/ui/Button.tsx'
 import Icon from '@/components/ui/Icon.tsx'
+import { PageHeader } from '@/components/global'
 import DropZone from './DropZone.tsx'
 import UploadQueue from './UploadQueue.tsx'
 import IngestionProgress from './IngestionProgress.tsx'
@@ -116,13 +117,8 @@ export default function UploadScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold uppercase tracking-wide" style={{ color: 'var(--text-primary)' }}>
-          UPLOAD & INGEST
-        </h1>
-      </div>
+    <div className="flex h-full flex-col gap-6">
+      <PageHeader title="Upload & Ingest" />
 
       {/* Drop Zone */}
       <DropZone onFilesAdded={handleFilesAdded} />

@@ -1,0 +1,13 @@
+{
+  "session_id": "0f027073-9dee-48f5-9e58-2c5e5fcae218",
+  "started_at": "2026-01-30T18:19:17.959Z",
+  "ended_at": "2026-01-31T00:05:51.578Z",
+  "reason": "clear",
+  "agents_spawned": 35,
+  "agents_completed": 0,
+  "modes_used": [
+    "autopilot",
+    "ultrapilot"
+  ],
+  "duration_ms": 20793619
+}

@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import type { Concept, Cluster } from '@/types/concept.ts'
 import EmptyState from '@/components/composites/EmptyState.tsx'
 import Badge from '@/components/ui/Badge.tsx'
+import { PageHeader, SplitPanel } from '@/components/global'
 import FilterPanel from './FilterPanel.tsx'
 import ClusterContainer from './ClusterContainer.tsx'
 import { MOCK_CONCEPTS, MOCK_CLUSTERS } from '@/fixtures/concepts-mock-data.ts'
@@ -55,19 +56,14 @@ export default function ConceptsScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 p-4">
-      {/* Top bar */}
-      <div className="flex items-center gap-3">
-        <h1 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-          Concepts
-        </h1>
-        <Badge variant="cyan">{filtered.length}</Badge>
-      </div>
+    <div className="flex h-full flex-col gap-4">
+      <PageHeader
+        title="Concepts"
+        actions={<Badge variant="cyan">{filtered.length}</Badge>}
+      />
 
-      {/* Body */}
-      <div className="flex flex-1 gap-4 overflow-hidden">
-        {/* Sidebar — hidden on small screens */}
-        <div className="hidden w-64 shrink-0 overflow-y-auto md:block">
+      <SplitPanel
+        sidebar={
           <FilterPanel
             domains={allDomains}
             themes={allThemes}
@@ -80,9 +76,8 @@ export default function ConceptsScreen() {
             onLevelsChange={setSelectedLevels}
             onClear={clearFilters}
           />
-        </div>
-
-        {/* Main content */}
+        }
+      >
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
           {filtered.length === 0 ? (
             <EmptyState title="No matching concepts" description="Try adjusting your filters." />
@@ -102,7 +97,7 @@ export default function ConceptsScreen() {
               .filter(Boolean)
           )}
         </div>
-      </div>
+      </SplitPanel>
     </div>
   )
 }

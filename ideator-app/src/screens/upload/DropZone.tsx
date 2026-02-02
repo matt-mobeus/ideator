@@ -1,7 +1,6 @@
 import { useState, useRef, type DragEvent, type ChangeEvent, type KeyboardEvent } from 'react'
 import { clsx } from 'clsx'
 import Icon from '@/components/ui/Icon.tsx'
-import { logger } from '@/utils/logger'
 
 interface DropZoneProps {
   onFilesAdded: (files: File[]) => void

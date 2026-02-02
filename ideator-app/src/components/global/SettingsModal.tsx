@@ -7,7 +7,7 @@ import { db } from '@/db/database.ts'
 import { APP_CONFIG } from '@/config/app.config.ts'
 import { encryptValue, decryptValue, isEncrypted } from '@/utils/crypto.ts'
 import { logger } from '@/utils/logger.ts'
-import type { AppSettings, ApiKeyField } from '@/types/settings.ts'
+import type { AppSettings, ApiKeyField, LlmProvider } from '@/types/settings.ts'
 import styles from './SettingsModal.module.css'
 
 interface SettingsModalProps {
@@ -63,8 +63,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [storageUsage, setStorageUsage] = useState<{ used: number; quota: number } | null>(null)
 
   // API key visibility toggles
-  const [showOpenAI, setShowOpenAI] = useState(false)
-  const [showAnthropic, setShowAnthropic] = useState(false)
+  const [showApiKey, setShowApiKey] = useState(false)
   const [showSerper, setShowSerper] = useState(false)
 
   // Delete confirmation state
@@ -76,8 +75,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       loadSettings()
       loadStorageUsage()
       // Reset visibility and delete state on modal reopen (FIX 3)
-      setShowOpenAI(false)
-      setShowAnthropic(false)
+      setShowApiKey(false)
       setShowSerper(false)
       setDeleteStep(0)
     }
@@ -117,9 +115,9 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         const newSettings: AppSettings = {
           id: 'default',
           llm: {
-            provider: 'openai',
+            provider: 'gemini',
             apiKey: '',
-            model: 'gpt-4o',
+            model: 'gemini-2.0-flash',
           },
           search: {
             enabled: false,
@@ -208,52 +206,69 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`
   }
 
-  const updateApiKey = (field: 'openai' | 'anthropic' | 'serper', value: string) => {
+  const handleProviderChange = (provider: LlmProvider) => {
     if (!settings) return
 
-    // FIX 1: Store all keys regardless of active provider
-    if (field === 'serper') {
-      setSettings({
-        ...settings,
-        search: {
-          ...settings.search,
-          apiKey: value,
-        },
-      })
-    } else if (field === 'openai') {
-      setSettings({
-        ...settings,
-        llm: {
-          ...settings.llm,
-          apiKey: value,
-        },
-      })
-    } else if (field === 'anthropic') {
-      setSettings({
-        ...settings,
-        llm: {
-          ...settings.llm,
-          apiKey: value,
-        },
-      })
+    // Auto-set default model based on provider
+    const defaultModels: Record<LlmProvider, string> = {
+      openai: 'gpt-4o',
+      anthropic: 'claude-sonnet-4-20250514',
+      gemini: 'gemini-2.0-flash',
     }
+
+    setSettings({
+      ...settings,
+      llm: {
+        ...settings.llm,
+        provider,
+        model: defaultModels[provider],
+      },
+    })
   }
 
-  const getApiKeyValue = (field: 'openai' | 'anthropic' | 'serper') => {
+  const updateLlmApiKey = (value: string) => {
+    if (!settings) return
+    setSettings({
+      ...settings,
+      llm: {
+        ...settings.llm,
+        apiKey: value,
+      },
+    })
+  }
+
+  const updateLlmModel = (value: string) => {
+    if (!settings) return
+    setSettings({
+      ...settings,
+      llm: {
+        ...settings.llm,
+        model: value,
+      },
+    })
+  }
+
+  const updateSerperApiKey = (value: string) => {
+    if (!settings) return
+    setSettings({
+      ...settings,
+      search: {
+        ...settings.search,
+        apiKey: value,
+      },
+    })
+  }
+
+  const getLlmApiKeyValue = () => {
     if (!settings) return ''
-    if (field === 'serper') {
-      const v = settings.search.apiKey
-      return typeof v === 'string' ? v : ''
-    }
-    if (field === 'openai') {
-      const v = settings.llm.provider === 'openai' ? settings.llm.apiKey : ''
-      return typeof v === 'string' ? v : ''
-    }
-    if (field === 'anthropic') {
-      const v = settings.llm.provider === 'anthropic' ? settings.llm.apiKey : ''
-      return typeof v === 'string' ? v : ''
-    }
-    return ''
+    const v = settings.llm.apiKey
+    return typeof v === 'string' ? v : ''
+  }
+
+  const getSerperApiKeyValue = () => {
+    if (!settings) return ''
+    const v = settings.search.apiKey
+    return typeof v === 'string' ? v : ''
   }
 
   return (
@@ -288,51 +303,62 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               Configure API keys for LLM and search providers. Keys are encrypted and stored locally in your browser.
             </p>
 
-            {/* OpenAI API Key */}
+            {/* Provider Selection */}
+            <div className={styles.inputWrapper}>
+              <label className={styles.label}>
+                Provider
+                <select
+                  value={settings?.llm.provider || 'gemini'}
+                  onChange={(e) => handleProviderChange(e.target.value as LlmProvider)}
+                  className={styles.select}
+                >
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Anthropic</option>
+                  <option value="gemini">Gemini</option>
+                </select>
+              </label>
+            </div>
+
+            {/* Model Input */}
             <div className={styles.inputWrapper}>
               <Input
-                label="OpenAI API Key"
-                type={showOpenAI ? 'text' : 'password'}
-                value={getApiKeyValue('openai')}
-                onChange={(e) => updateApiKey('openai', e.target.value)}
-                placeholder="sk-..."
+                label="Model"
+                type="text"
+                value={settings?.llm.model || ''}
+                onChange={(e) => updateLlmModel(e.target.value)}
+                placeholder="e.g., gemini-2.0-flash"
+              />
+            </div>
+
+            {/* API Key */}
+            <div className={styles.inputWrapper}>
+              <Input
+                label="API Key"
+                type={showApiKey ? 'text' : 'password'}
+                value={getLlmApiKeyValue()}
+                onChange={(e) => updateLlmApiKey(e.target.value)}
+                placeholder="Enter your API key"
               />
               <button
                 type="button"
-                onClick={() => setShowOpenAI(!showOpenAI)}
+                onClick={() => setShowApiKey(!showApiKey)}
                 className={styles.toggleButton}
-                aria-label={showOpenAI ? 'Hide key' : 'Show key'}
+                aria-label={showApiKey ? 'Hide key' : 'Show key'}
               >
-                <Icon name={showOpenAI ? 'eye-off' : 'eye'} size={16} />
+                <Icon name={showApiKey ? 'eye-off' : 'eye'} size={16} />
               </button>
             </div>
 
-            {/* Anthropic API Key */}
-            <div className={styles.inputWrapper}>
-              <Input
-                label="Anthropic API Key"
-                type={showAnthropic ? 'text' : 'password'}
-                value={getApiKeyValue('anthropic')}
-                onChange={(e) => updateApiKey('anthropic', e.target.value)}
-                placeholder="sk-ant-..."
-              />
-              <button
-                type="button"
-                onClick={() => setShowAnthropic(!showAnthropic)}
-                className={styles.toggleButton}
-                aria-label={showAnthropic ? 'Hide key' : 'Show key'}
-              >
-                <Icon name={showAnthropic ? 'eye-off' : 'eye'} size={16} />
-              </button>
-            </div>
+            <hr className={styles.divider} />
 
-            {/* Serper API Key */}
+            {/* Optional: Serper API Key */}
+            <p className={styles.optionalLabel}>Optional</p>
             <div className={styles.inputWrapper}>
               <Input
-                label="Serper API Key (Optional)"
+                label="Serper API Key"
                 type={showSerper ? 'text' : 'password'}
-                value={getApiKeyValue('serper')}
-                onChange={(e) => updateApiKey('serper', e.target.value)}
+                value={getSerperApiKeyValue()}
+                onChange={(e) => updateSerperApiKey(e.target.value)}
                 placeholder="For web search capabilities"
               />
               <button

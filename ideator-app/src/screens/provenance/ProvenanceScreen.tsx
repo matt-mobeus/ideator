@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import type { Concept } from '@/types/concept.ts'
+import type { Claim } from '@/types/asset.ts'
 import EmptyState from '@/components/composites/EmptyState.tsx'
-import Breadcrumb from '@/components/composites/Breadcrumb.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Icon from '@/components/ui/Icon.tsx'
+import { PageHeader, SplitPanel } from '@/components/global'
 import SourcePanel from './SourcePanel.tsx'
 import ClaimsPanel from './ClaimsPanel.tsx'
 import AssetGenerationModal from './AssetGenerationModal.tsx'
@@ -47,7 +48,6 @@ function groupSourcesByFile(concept: Concept): GroupedSource[] {
 
 export default function ProvenanceScreen() {
   const { id: conceptId } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const [useMock] = useState(true)
   const [highlightedFileId, setHighlightedFileId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -79,50 +79,34 @@ export default function ProvenanceScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 p-4">
-      {/* Top bar */}
-      <div className="flex items-center justify-between gap-4">
-        <Breadcrumb
-          items={[
-            { label: 'Concepts', onClick: () => navigate('/concepts') },
-            { label: concept.name, onClick: () => navigate(`/concepts/${concept.id}`) },
-            { label: 'Provenance' },
-          ]}
-        />
-        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-          <Icon name="plus" />
-          Generate Asset
-        </Button>
-      </div>
+    <div className="flex h-full flex-col gap-4">
+      <PageHeader
+        title={`${concept.name} — Provenance`}
+        actions={
+          <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+            <Icon name="plus" />
+            Generate Asset
+          </Button>
+        }
+      />
 
-      {/* Split panel layout */}
-      <div className="flex flex-1 gap-4 overflow-hidden">
-        {/* Left panel - Sources (40%) */}
-        <div
-          className="flex flex-col overflow-hidden"
-          style={{ width: '40%', minWidth: '300px' }}
-        >
+      <SplitPanel
+        sidebarWidth="40%"
+        sidebar={
           <SourcePanel
             sources={sources}
             highlightedFileId={highlightedFileId || undefined}
             onExcerptHover={handleExcerptHover}
           />
-        </div>
+        }
+      >
+        <ClaimsPanel
+          claims={claims}
+          highlightedFileId={highlightedFileId || undefined}
+          onClaimHover={handleClaimHover}
+        />
+      </SplitPanel>
 
-        {/* Right panel - Claims (60%) */}
-        <div
-          className="flex flex-col overflow-hidden"
-          style={{ width: '60%', minWidth: '400px' }}
-        >
-          <ClaimsPanel
-            claims={claims}
-            highlightedFileId={highlightedFileId || undefined}
-            onClaimHover={handleClaimHover}
-          />
-        </div>
-      </div>
-
-      {/* Asset generation modal */}
       <AssetGenerationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -10,6 +10,20 @@ interface LogOptions {
   data?: unknown
 }
 
+function isLogOptions(value: unknown): value is LogOptions {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    ('context' in value || 'data' in value)
+  )
+}
+
+function normalizeOptions(optionsOrError?: LogOptions | unknown): LogOptions | undefined {
+  if (optionsOrError === undefined) return undefined
+  if (isLogOptions(optionsOrError)) return optionsOrError
+  return { data: optionsOrError }
+}
+
 function formatMessage(
   level: LogLevel,
   message: string,
@@ -28,19 +42,19 @@ function formatMessage(
 }
 
 export const logger = {
-  debug(message: string, options?: LogOptions): void {
-    console.debug(formatMessage('DEBUG', message, options))
+  debug(message: string, optionsOrError?: LogOptions | unknown): void {
+    console.debug(formatMessage('DEBUG', message, normalizeOptions(optionsOrError)))
   },
 
-  info(message: string, options?: LogOptions): void {
-    console.info(formatMessage('INFO', message, options))
+  info(message: string, optionsOrError?: LogOptions | unknown): void {
+    console.info(formatMessage('INFO', message, normalizeOptions(optionsOrError)))
   },
 
-  warn(message: string, options?: LogOptions): void {
-    console.warn(formatMessage('WARN', message, options))
+  warn(message: string, optionsOrError?: LogOptions | unknown): void {
+    console.warn(formatMessage('WARN', message, normalizeOptions(optionsOrError)))
   },
 
-  error(message: string, options?: LogOptions): void {
-    console.error(formatMessage('ERROR', message, options))
+  error(message: string, optionsOrError?: LogOptions | unknown): void {
+    console.error(formatMessage('ERROR', message, normalizeOptions(optionsOrError)))
   },
 }

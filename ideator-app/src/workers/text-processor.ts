@@ -2,7 +2,6 @@ import type { FileFormat } from '@/types/file.ts'
 import * as pdfjsLib from 'pdfjs-dist'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
 import mammoth from 'mammoth'
-import { logger } from '@/utils/logger'
 
 // Set worker src to empty string for inline worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = ''
@@ -53,7 +52,8 @@ async function processPdf(blob: Blob): Promise<string> {
     const page = await pdf.getPage(i)
     const textContent = await page.getTextContent()
     const pageText = textContent.items
-      .map((item: TextItem) => item.str)
+      .filter((item): item is TextItem => 'str' in item)
+      .map((item) => item.str)
       .join(' ')
     textParts.push(pageText)
   }

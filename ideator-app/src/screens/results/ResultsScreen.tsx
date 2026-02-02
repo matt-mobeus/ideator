@@ -3,6 +3,7 @@ import type { AnalysisResult, ValidityTier } from '@/types/analysis.ts'
 import EmptyState from '@/components/composites/EmptyState.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import Button from '@/components/ui/Button.tsx'
+import { PageHeader } from '@/components/global'
 import TierAccordion from './TierAccordion.tsx'
 import ResultDetailPanel from './ResultDetailPanel.tsx'
 import ExportModal from './ExportModal.tsx'
@@ -51,19 +52,18 @@ export default function ResultsScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 p-4">
-      {/* Top bar */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <h1 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Results
-          </h1>
-          <Badge variant="cyan">{results.length}</Badge>
-        </div>
-        <Button onClick={() => setIsExportOpen(true)} variant="primary">
-          Export
-        </Button>
-      </div>
+    <div className="flex h-full flex-col gap-4">
+      <PageHeader
+        title="Results"
+        actions={
+          <>
+            <Badge variant="cyan">{results.length}</Badge>
+            <Button onClick={() => setIsExportOpen(true)} variant="primary">
+              Export
+            </Button>
+          </>
+        }
+      />
 
       {/* Main content */}
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto">

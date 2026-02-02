@@ -4,3 +4,6 @@ export { FullScreenLoader, SectionLoader, InlineSpinner } from './LoadingStates.
 export { default as GlobalSearchModal } from './GlobalSearchModal.tsx'
 export { default as SettingsModal } from './SettingsModal.tsx'
 export { ErrorBoundary } from './ErrorBoundary'
+export { PageLayout } from './PageLayout'
+export { PageHeader } from './PageHeader'
+export { SplitPanel } from './SplitPanel'
