@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button.tsx'
 import Icon from '@/components/ui/Icon.tsx'
 import { PageHeader } from '@/components/global'
@@ -8,6 +9,10 @@ import IngestionProgress from './IngestionProgress.tsx'
 import { processFileWithProgress } from '@/services/file-processing.service'
 import type { FileFormat } from '@/types/file'
 import { logger } from '@/utils/logger'
+import { buildTaskGraph } from '@/services/pipeline/graph-builder.ts'
+import { PipelineOrchestrator } from '@/services/pipeline/orchestrator.ts'
+import { pipelineStore } from '@/services/pipeline/store.ts'
+import { db } from '@/db/database.ts'
 
 interface QueuedFile {
   file: File
@@ -25,6 +30,7 @@ interface IngestionJob {
 }
 
 export default function UploadScreen() {
+  const navigate = useNavigate()
   const [queuedFiles, setQueuedFiles] = useState<QueuedFile[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [jobs, setJobs] = useState<IngestionJob[]>([])
@@ -61,13 +67,16 @@ export default function UploadScreen() {
 
     setJobs(newJobs)
 
+    // Track per-file results
+    const results: (string | null)[] = new Array(queuedFiles.length).fill(null)
+
     // Process each file with real progress tracking
     const processingPromises = queuedFiles.map(async (queuedFile, index) => {
       const job = newJobs[index]
       const format = queuedFile.format as FileFormat
 
       try {
-        await processFileWithProgress(
+        const text = await processFileWithProgress(
           queuedFile.file,
           format,
           (progress, label) => {
@@ -80,6 +89,7 @@ export default function UploadScreen() {
             )
           }
         )
+        results[index] = text
 
         // Mark as completed
         setJobs((prev) =>
@@ -108,12 +118,60 @@ export default function UploadScreen() {
     // Wait for all files to complete
     await Promise.all(processingPromises)
 
-    // Clean up after a brief delay
-    setTimeout(() => {
+    // Collect successful file inputs for the pipeline
+    const fileInputs = queuedFiles
+      .filter((_, i) => results[i] !== null)
+      .map((qf) => ({
+        blob: qf.file as Blob,
+        name: qf.name,
+        format: qf.format as FileFormat,
+      }))
+
+    if (fileInputs.length === 0) {
       setIsProcessing(false)
       setQueuedFiles([])
       setJobs([])
-    }, 2000)
+      return
+    }
+
+    try {
+      const settings = await db.settings.get('app-settings')
+      if (!settings?.llm?.apiKey) {
+        logger.error('No LLM API key configured', { context: 'upload-screen' })
+        setIsProcessing(false)
+        return
+      }
+
+      const plan = buildTaskGraph(fileInputs, {
+        domain: undefined,
+        generateDocument: true,
+        generateVisual: true,
+        trackProvenance: true,
+        generateTimeline: true,
+        generateNodeMap: true,
+      })
+
+      const orchestrator = new PipelineOrchestrator(plan, settings.llm, pipelineStore)
+      sessionStorage.setItem('active-pipeline-id', plan.id)
+
+      orchestrator.run().catch((err) => {
+        logger.error('Pipeline execution failed', {
+          context: 'upload-screen',
+          data: { planId: plan.id, error: String(err) },
+        })
+      })
+
+      navigate('/concepts')
+    } catch (err) {
+      logger.error('Failed to start pipeline', {
+        context: 'upload-screen',
+        data: { error: String(err) },
+      })
+    } finally {
+      setIsProcessing(false)
+      setQueuedFiles([])
+      setJobs([])
+    }
   }
 
   return (

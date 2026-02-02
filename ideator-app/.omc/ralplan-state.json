@@ -1,0 +1,1 @@
+{"active":true,"mode":"ralplan","iteration":0,"max_iterations":5,"plan_path":"","current_phase":"planner_planning","started_at":"2026-02-02T15:20:00.000Z","task_description":"Connect upload screen to pipeline orchestrator - after file processing completes, store extracted text, start pipeline, and navigate to analyze screen"}

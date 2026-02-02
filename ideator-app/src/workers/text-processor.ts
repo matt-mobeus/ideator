@@ -3,8 +3,11 @@ import * as pdfjsLib from 'pdfjs-dist'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
 import mammoth from 'mammoth'
 
-// Set worker src to empty string for inline worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = ''
+// Configure PDF.js worker for Vite bundling
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).href
 
 export async function processTextFile(blob: Blob, format: FileFormat): Promise<string> {
   switch (format) {

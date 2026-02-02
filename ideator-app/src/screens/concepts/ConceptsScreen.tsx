@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import type { Concept, Cluster } from '@/types/concept.ts'
+import { pipelineStore } from '@/services/pipeline/store.ts'
 import EmptyState from '@/components/composites/EmptyState.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import { PageHeader, SplitPanel } from '@/components/global'
@@ -16,10 +17,47 @@ function unique(arr: string[]): string[] {
 // ── Screen ────────────────────────────────────────────────────────────
 
 export default function ConceptsScreen() {
-  const [useMock] = useState(true)
+  const [pipelineState, setPipelineState] = useState<'idle' | 'running' | 'done' | 'error'>('idle')
+  const [pipelineConcepts, setPipelineConcepts] = useState<Concept[] | null>(null)
 
-  const concepts: Concept[] = useMock ? MOCK_CONCEPTS : []
-  const clusters: Cluster[] = useMock ? MOCK_CLUSTERS : []
+  useEffect(() => {
+    const pipelineId = sessionStorage.getItem('active-pipeline-id')
+    if (!pipelineId) return
+
+    let cancelled = false
+
+    const pollPipeline = async () => {
+      try {
+        const plan = await pipelineStore.load(pipelineId)
+        if (cancelled || !plan) return
+
+        const conceptTask = Object.values(plan.tasks).find(t => t.type === 'concept-extraction')
+        if (!conceptTask) return
+
+        if (conceptTask.status === 'completed' && conceptTask.output && 'concepts' in conceptTask.output) {
+          setPipelineConcepts(conceptTask.output.concepts)
+          setPipelineState('done')
+          return
+        }
+
+        if (conceptTask.status === 'failed') {
+          setPipelineState('error')
+          return
+        }
+
+        setPipelineState('running')
+        setTimeout(pollPipeline, 2000)
+      } catch {
+        setPipelineState('error')
+      }
+    }
+
+    pollPipeline()
+    return () => { cancelled = true }
+  }, [])
+
+  const concepts: Concept[] = pipelineConcepts ?? MOCK_CONCEPTS
+  const clusters: Cluster[] = pipelineConcepts ? [] : MOCK_CLUSTERS
 
   const [selectedDomains, setSelectedDomains] = useState<string[]>([])
   const [selectedThemes, setSelectedThemes] = useState<string[]>([])
@@ -61,6 +99,17 @@ export default function ConceptsScreen() {
         title="Concepts"
         actions={<Badge variant="cyan">{filtered.length}</Badge>}
       />
+
+      {pipelineState === 'running' && (
+        <div className="mx-4 mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300">
+          Pipeline running — concepts will appear when extraction completes.
+        </div>
+      )}
+      {pipelineState === 'error' && (
+        <div className="mx-4 mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+          Pipeline encountered an error. Showing sample data.
+        </div>
+      )}
 
       <SplitPanel
         sidebar={
