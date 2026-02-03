@@ -12,9 +12,9 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ items, className }: BreadcrumbProps) {
   return (
-    <nav className={clsx('flex items-center gap-1 text-sm', className)} aria-label="Breadcrumb">
+    <nav className={clsx('flex items-center gap-2 text-sm', className)} aria-label="Breadcrumb">
       {items.map((item, i) => (
-        <span key={i} className="flex items-center gap-1">
+        <span key={i} className="flex items-center gap-2">
           {i > 0 && <span style={{ color: 'var(--text-muted)' }}>/</span>}
           {item.onClick ? (
             <button

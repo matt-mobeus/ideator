@@ -30,7 +30,7 @@ export default function ProgressBar({ value, max = 100, label, variant = 'cyan',
       )}
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-surface)]">
         <div
-          className="h-full rounded-full transition-all duration-300"
+          className="h-full rounded-full transition-all duration-[var(--duration-slow)]"
           style={{ width: `${pct}%`, backgroundColor: variantColors[variant] }}
           role="progressbar"
           aria-valuenow={value}

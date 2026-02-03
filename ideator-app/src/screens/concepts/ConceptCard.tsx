@@ -24,7 +24,7 @@ export default function ConceptCard({ concept, onClick }: ConceptCardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-4 text-left transition-all hover:border-[var(--color-cyan)] hover:shadow-[var(--glow-cyan-sm)]"
+      className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-5 text-left transition-all hover:border-[var(--color-cyan)] hover:shadow-[var(--glow-cyan-sm)]"
     >
       <div className="flex items-center justify-between gap-2">
         <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>

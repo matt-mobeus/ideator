@@ -33,7 +33,7 @@ export default function AnalyzeScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col gap-6">
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
@@ -44,7 +44,7 @@ export default function AnalyzeScreen() {
       />
 
       {/* Content */}
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto md:flex-row">
+      <div className="flex flex-1 flex-col gap-6 overflow-y-auto md:flex-row">
         <div className="flex-1">
           <ConceptDetail concept={concept} />
         </div>

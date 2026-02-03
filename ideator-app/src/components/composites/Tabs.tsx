@@ -14,7 +14,7 @@ interface TabsProps {
 
 export default function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
   return (
-    <div className={clsx('flex gap-0 border-b border-[var(--border-default)]', className)} role="tablist">
+    <div className={clsx('flex gap-1 border-b border-[var(--border-default)]', className)} role="tablist">
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -22,7 +22,7 @@ export default function Tabs({ tabs, activeTab, onTabChange, className }: TabsPr
           aria-selected={activeTab === tab.id}
           onClick={() => onTabChange(tab.id)}
           className={clsx(
-            'px-4 py-2 text-sm font-medium transition-all duration-[var(--transition-default)] border-b-2 -mb-px',
+            'px-4 py-2 text-sm font-medium transition-all duration-[var(--duration-normal)] border-b-2 -mb-px',
             activeTab === tab.id
               ? 'border-[var(--color-cyan)] text-[var(--color-cyan)]'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]',

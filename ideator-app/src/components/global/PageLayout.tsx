@@ -6,13 +6,19 @@ interface PageLayoutProps {
 }
 
 export function PageLayout({ children, variant = 'default' }: PageLayoutProps) {
-  const style: React.CSSProperties = variant === 'default'
-    ? { padding: 'var(--layout-gutter)' }
-    : { padding: 0 };
+  if (variant === 'full') {
+    return (
+      <div className="flex min-h-full flex-1 flex-col">
+        {children}
+      </div>
+    );
+  }
 
   return (
-    <div className="flex min-h-full flex-col" style={style}>
-      {children}
+    <div className="flex min-h-full flex-1 flex-col" style={{ padding: 'var(--layout-gutter)' }}>
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
+        {children}
+      </div>
     </div>
   );
 }

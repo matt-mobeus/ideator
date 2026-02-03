@@ -1,0 +1,14 @@
+# Ralph Progress Log
+Started: 2026-02-02T00:00:00Z
+
+## Codebase Patterns
+- Design system uses CSS custom properties: var(--color-*), var(--radius-*), var(--text-*)
+- Accordion component at src/components/composites/Accordion.tsx supports title, defaultOpen, children
+- Checkbox component at src/components/ui/Checkbox.tsx
+- Pipeline data polled from IndexedDB via pipelineStore
+- normalizeConcept must be shared between extraction service and ConceptsScreen
+
+## Approved Plan
+.omc/plans/concepts-ui-fix.md (ralplan approved after 2 iterations)
+
+---

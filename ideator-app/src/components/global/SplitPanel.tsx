@@ -30,14 +30,14 @@ export function SplitPanel({
       >
         {sidebar}
       </aside>
-      <main
+      <section
         style={{
           flex: 1,
           overflowY: 'auto',
         }}
       >
         {children}
-      </main>
+      </section>
     </div>
   );
 }

@@ -1,10 +1,16 @@
+import Accordion from '@/components/composites/Accordion.tsx'
 import Checkbox from '@/components/ui/Checkbox.tsx'
 import Button from '@/components/ui/Button.tsx'
 
-interface FilterPanelProps {
+export interface LevelFilterData {
+  level: 'L1_SPECIFIC' | 'L2_APPROACH' | 'L3_PARADIGM'
+  label: string
   domains: string[]
   themes: string[]
-  levels: string[]
+}
+
+interface FilterPanelProps {
+  levelFilters: LevelFilterData[]
   selectedDomains: string[]
   selectedThemes: string[]
   selectedLevels: string[]
@@ -19,9 +25,7 @@ function toggleItem(list: string[], item: string): string[] {
 }
 
 export default function FilterPanel({
-  domains,
-  themes,
-  levels,
+  levelFilters,
   selectedDomains,
   selectedThemes,
   selectedLevels,
@@ -33,39 +37,50 @@ export default function FilterPanel({
   const hasFilters = selectedDomains.length > 0 || selectedThemes.length > 0 || selectedLevels.length > 0
 
   return (
-    <aside className="flex flex-col gap-6 rounded-[var(--radius-lg)] bg-[var(--bg-secondary)] p-4">
-      <Section title="Domains">
-        {domains.map((d) => (
-          <Checkbox
-            key={d}
-            label={d}
-            checked={selectedDomains.includes(d)}
-            onChange={() => onDomainsChange(toggleItem(selectedDomains, d))}
-          />
-        ))}
-      </Section>
+    <aside className="flex flex-col gap-4 rounded-[var(--radius-lg)] bg-[var(--bg-secondary)] p-5">
+      {levelFilters.map((lf) => (
+        <Accordion key={lf.level} title={lf.label} defaultOpen={true}>
+          <div className="flex flex-col gap-3">
+            <Checkbox
+              label={`All ${lf.label}`}
+              checked={selectedLevels.includes(lf.level)}
+              onChange={() => onLevelsChange(toggleItem(selectedLevels, lf.level))}
+            />
 
-      <Section title="Themes">
-        {themes.map((t) => (
-          <Checkbox
-            key={t}
-            label={t}
-            checked={selectedThemes.includes(t)}
-            onChange={() => onThemesChange(toggleItem(selectedThemes, t))}
-          />
-        ))}
-      </Section>
+            {lf.domains.length > 0 && (
+              <div className="flex flex-col gap-2 pl-4">
+                <h5 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+                  Domains
+                </h5>
+                {lf.domains.map((d) => (
+                  <Checkbox
+                    key={d}
+                    label={d}
+                    checked={selectedDomains.includes(d)}
+                    onChange={() => onDomainsChange(toggleItem(selectedDomains, d))}
+                  />
+                ))}
+              </div>
+            )}
 
-      <Section title="Abstraction Levels">
-        {levels.map((l) => (
-          <Checkbox
-            key={l}
-            label={l}
-            checked={selectedLevels.includes(l)}
-            onChange={() => onLevelsChange(toggleItem(selectedLevels, l))}
-          />
-        ))}
-      </Section>
+            {lf.themes.length > 0 && (
+              <div className="flex flex-col gap-2 pl-4">
+                <h5 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+                  Themes
+                </h5>
+                {lf.themes.map((t) => (
+                  <Checkbox
+                    key={t}
+                    label={t}
+                    checked={selectedThemes.includes(t)}
+                    onChange={() => onThemesChange(toggleItem(selectedThemes, t))}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </Accordion>
+      ))}
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={onClear}>
@@ -73,16 +88,5 @@ export default function FilterPanel({
         </Button>
       )}
     </aside>
-  )
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
-        {title}
-      </h4>
-      {children}
-    </div>
   )
 }

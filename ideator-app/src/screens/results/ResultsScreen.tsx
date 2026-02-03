@@ -52,7 +52,7 @@ export default function ResultsScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col gap-6">
       <PageHeader
         title="Results"
         actions={
@@ -66,7 +66,7 @@ export default function ResultsScreen() {
       />
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
+      <div className="flex flex-1 flex-col gap-5 overflow-y-auto">
         {(['T1', 'T2', 'T3', 'T4'] as ValidityTier[]).map((tier) => {
           const tierResults = groupedResults[tier]
           if (tierResults.length === 0) return null

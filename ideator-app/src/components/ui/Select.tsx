@@ -31,7 +31,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={clsx(
-            'rounded-[var(--radius-md)] border bg-[var(--bg-surface)] px-3 py-2 text-sm outline-none transition-all duration-[var(--transition-default)] appearance-none cursor-pointer',
+            'rounded-[var(--radius-md)] border bg-[var(--bg-surface)] px-3 py-2 text-sm outline-none transition-all duration-[var(--duration-normal)] appearance-none cursor-pointer',
             'focus:border-[var(--border-active)] focus:shadow-[var(--glow-cyan)]',
             error ? 'border-[var(--color-red)]' : 'border-[var(--border-default)]',
             className,

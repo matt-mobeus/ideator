@@ -31,7 +31,7 @@ export default function Modal({ open, onClose, title, children, className }: Mod
           className,
         )}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <h2
             className="text-lg font-semibold"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--color-cyan)' }}

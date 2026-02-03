@@ -11,7 +11,7 @@ export default function Card({ children, glow, glowColor, className, ...props }:
   return (
     <div
       className={clsx(
-        'rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-4',
+        'rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-5',
         glow && 'shadow-[0_0_10px_var(--border-glow)]',
         className,
       )}

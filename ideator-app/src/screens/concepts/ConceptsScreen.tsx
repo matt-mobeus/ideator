@@ -7,6 +7,7 @@ import { PageHeader, SplitPanel } from '@/components/global'
 import FilterPanel from './FilterPanel.tsx'
 import ClusterContainer from './ClusterContainer.tsx'
 import { MOCK_CONCEPTS, MOCK_CLUSTERS } from '@/fixtures/concepts-mock-data.ts'
+import { normalizeConcept } from '@/services/concept-extraction.service.ts'
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -35,7 +36,7 @@ export default function ConceptsScreen() {
         if (!conceptTask) return
 
         if (conceptTask.status === 'completed' && conceptTask.output && 'concepts' in conceptTask.output) {
-          setPipelineConcepts(conceptTask.output.concepts)
+          setPipelineConcepts(conceptTask.output.concepts.map(normalizeConcept))
           setPipelineState('done')
           return
         }
@@ -57,15 +58,47 @@ export default function ConceptsScreen() {
   }, [])
 
   const concepts: Concept[] = pipelineConcepts ?? MOCK_CONCEPTS
-  const clusters: Cluster[] = pipelineConcepts ? [] : MOCK_CLUSTERS
+
+  const LEVEL_LABELS: Record<string, string> = {
+    L1_SPECIFIC: 'L1 — Specific',
+    L2_APPROACH: 'L2 — Approach',
+    L3_PARADIGM: 'L3 — Paradigm',
+  }
+
+  const clusters: Cluster[] = useMemo(() => {
+    if (!pipelineConcepts) return MOCK_CLUSTERS
+    const levelGroups = new Map<string, string[]>()
+    concepts.forEach((c) => {
+      const key = c.abstractionLevel || 'L2_APPROACH'
+      if (!levelGroups.has(key)) levelGroups.set(key, [])
+      levelGroups.get(key)!.push(c.id)
+    })
+    return Array.from(levelGroups.entries()).map(([level, ids]) => ({
+      id: `auto-${level}`,
+      name: LEVEL_LABELS[level] || level,
+      domain: '',
+      conceptIds: ids,
+    }))
+  }, [pipelineConcepts, concepts])
 
   const [selectedDomains, setSelectedDomains] = useState<string[]>([])
   const [selectedThemes, setSelectedThemes] = useState<string[]>([])
   const [selectedLevels, setSelectedLevels] = useState<string[]>([])
 
-  const allDomains = useMemo(() => unique(concepts.map((c) => c.domain)), [concepts])
-  const allThemes = useMemo(() => unique(concepts.flatMap((c) => c.themes)), [concepts])
-  const allLevels = useMemo(() => unique(concepts.map((c) => c.abstractionLevel)), [concepts])
+  const levelFilters = useMemo(() => {
+    const levels = ['L1_SPECIFIC', 'L2_APPROACH', 'L3_PARADIGM'] as const
+    return levels
+      .map((level) => {
+        const levelConcepts = concepts.filter((c) => c.abstractionLevel === level)
+        return {
+          level,
+          label: LEVEL_LABELS[level] || level,
+          domains: unique(levelConcepts.map((c) => c.domain)).filter(Boolean),
+          themes: unique(levelConcepts.flatMap((c) => c.themes)).filter(Boolean),
+        }
+      })
+      .filter((lf) => lf.domains.length > 0 || lf.themes.length > 0)
+  }, [concepts])
 
   const filtered = useMemo(() => {
     return concepts.filter((c) => {
@@ -94,19 +127,19 @@ export default function ConceptsScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col gap-6">
       <PageHeader
         title="Concepts"
         actions={<Badge variant="cyan">{filtered.length}</Badge>}
       />
 
       {pipelineState === 'running' && (
-        <div className="mx-4 mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300">
+        <div className="rounded-[var(--radius-md)] border border-[var(--color-blue)] bg-[rgba(68,136,255,0.08)] p-3 text-sm" style={{ color: 'var(--color-blue)' }}>
           Pipeline running — concepts will appear when extraction completes.
         </div>
       )}
       {pipelineState === 'error' && (
-        <div className="mx-4 mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+        <div className="rounded-[var(--radius-md)] border border-[var(--color-orange)] bg-[rgba(255,102,0,0.08)] p-3 text-sm" style={{ color: 'var(--color-orange)' }}>
           Pipeline encountered an error. Showing sample data.
         </div>
       )}
@@ -114,9 +147,7 @@ export default function ConceptsScreen() {
       <SplitPanel
         sidebar={
           <FilterPanel
-            domains={allDomains}
-            themes={allThemes}
-            levels={allLevels}
+            levelFilters={levelFilters}
             selectedDomains={selectedDomains}
             selectedThemes={selectedThemes}
             selectedLevels={selectedLevels}
@@ -127,13 +158,13 @@ export default function ConceptsScreen() {
           />
         }
       >
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4">
           {filtered.length === 0 ? (
             <EmptyState title="No matching concepts" description="Try adjusting your filters." />
           ) : (
             clusters
               .map((cluster) => {
-                const clusterConcepts = filtered.filter((c) => c.clusterId === cluster.id)
+                const clusterConcepts = filtered.filter((c) => cluster.conceptIds.includes(c.id))
                 if (clusterConcepts.length === 0) return null
                 return (
                   <ClusterContainer

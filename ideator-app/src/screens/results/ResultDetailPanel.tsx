@@ -68,7 +68,7 @@ export default function ResultDetailPanel({ result, conceptName, onClose }: Resu
 
           {/* Composite Score */}
           <div
-            className="rounded-lg p-4"
+            className="rounded-[var(--radius-md)] p-4"
             style={{
               background: `${color}10`,
               borderLeft: `4px solid ${color}`,
@@ -225,7 +225,7 @@ export default function ResultDetailPanel({ result, conceptName, onClose }: Resu
               {result.supportingEvidence.map((evidence, i) => (
                 <div
                   key={i}
-                  className="rounded-lg p-3 text-sm"
+                  className="rounded-[var(--radius-md)] p-3 text-sm"
                   style={{
                     background: 'var(--bg-tertiary)',
                     borderLeft: '2px solid var(--color-cyan)',

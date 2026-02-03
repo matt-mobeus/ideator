@@ -77,7 +77,7 @@ export default function DropZone({ onFilesAdded }: DropZoneProps) {
   return (
     <div
       className={clsx(
-        'relative flex flex-col items-center justify-center gap-4 rounded-[var(--radius-lg)] border-2 border-dashed p-12 transition-all duration-[var(--transition-default)] cursor-pointer',
+        'relative flex flex-col items-center justify-center gap-4 rounded-[var(--radius-lg)] border-2 border-dashed p-8 transition-all duration-[var(--duration-normal)] cursor-pointer',
         isDragging
           ? 'border-[var(--color-cyan)] bg-[rgba(0,255,255,0.05)] shadow-[var(--glow-cyan-lg)]'
           : 'border-[var(--border-default)] hover:border-[var(--color-cyan)] hover:shadow-[var(--glow-cyan-md)]',
@@ -103,7 +103,7 @@ export default function DropZone({ onFilesAdded }: DropZoneProps) {
         name="upload"
         size={24}
         className={clsx(
-          'transition-colors duration-[var(--transition-default)]',
+          'transition-colors duration-[var(--duration-normal)]',
           isDragging ? 'text-[var(--color-cyan)]' : 'text-[var(--text-muted)]',
         )}
       />
@@ -111,7 +111,7 @@ export default function DropZone({ onFilesAdded }: DropZoneProps) {
       <div className="flex flex-col items-center gap-2">
         <p
           className={clsx(
-            'text-sm font-medium uppercase tracking-wide transition-colors duration-[var(--transition-default)]',
+            'text-sm font-medium uppercase tracking-wide transition-colors duration-[var(--duration-normal)]',
             isDragging ? 'text-[var(--color-cyan)]' : 'text-[var(--text-primary)]',
           )}
         >

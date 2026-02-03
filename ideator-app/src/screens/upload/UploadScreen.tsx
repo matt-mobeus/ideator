@@ -13,6 +13,7 @@ import { buildTaskGraph } from '@/services/pipeline/graph-builder.ts'
 import { PipelineOrchestrator } from '@/services/pipeline/orchestrator.ts'
 import { pipelineStore } from '@/services/pipeline/store.ts'
 import { db } from '@/db/database.ts'
+import { decryptValue, isEncrypted } from '@/utils/crypto.ts'
 
 interface QueuedFile {
   file: File
@@ -135,9 +136,28 @@ export default function UploadScreen() {
     }
 
     try {
-      const settings = await db.settings.get('app-settings')
+      const allSettings = await db.settings.toArray()
+      const settings = allSettings[0]
       if (!settings?.llm?.apiKey) {
         logger.error('No LLM API key configured', { context: 'upload-screen' })
+        setIsProcessing(false)
+        return
+      }
+
+      // Decrypt the API key before passing to pipeline
+      let plainKey: string
+      if (typeof settings.llm.apiKey === 'string') {
+        plainKey = settings.llm.apiKey
+      } else if (isEncrypted(settings.llm.apiKey)) {
+        plainKey = await decryptValue(settings.llm.apiKey)
+      } else {
+        logger.error('Invalid API key format', { context: 'upload-screen' })
+        setIsProcessing(false)
+        return
+      }
+
+      if (!plainKey) {
+        logger.error('API key is empty after decryption', { context: 'upload-screen' })
         setIsProcessing(false)
         return
       }
@@ -151,7 +171,8 @@ export default function UploadScreen() {
         generateNodeMap: true,
       })
 
-      const orchestrator = new PipelineOrchestrator(plan, settings.llm, pipelineStore)
+      const llmConfig = { ...settings.llm, apiKey: plainKey }
+      const orchestrator = new PipelineOrchestrator(plan, llmConfig, pipelineStore)
       sessionStorage.setItem('active-pipeline-id', plan.id)
 
       orchestrator.run().catch((err) => {

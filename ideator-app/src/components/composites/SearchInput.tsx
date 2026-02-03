@@ -17,7 +17,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           ref={ref}
           type="search"
           value={value}
-          className="w-full rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] py-2 pl-9 pr-8 text-sm outline-none transition-all duration-[var(--transition-default)] placeholder:text-[var(--text-muted)] focus:border-[var(--border-active)] focus:shadow-[var(--glow-cyan)]"
+          className="w-full rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] py-2 pl-9 pr-8 text-sm outline-none transition-all duration-[var(--duration-normal)] placeholder:text-[var(--text-muted)] focus:border-[var(--border-active)] focus:shadow-[var(--glow-cyan)]"
           style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
           {...props}
         />

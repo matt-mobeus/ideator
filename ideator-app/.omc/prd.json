@@ -1,0 +1,66 @@
+{
+  "project": "Concepts Screen UI/UX Fix",
+  "branchName": "ralph/concepts-ui-fix",
+  "description": "Fix the Concepts screen where real LLM results fail to display: empty content area, malformed domain filters, missing themes/levels, and flat filter hierarchy.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Normalize LLM concept data",
+      "description": "As a user, I want LLM-extracted concepts to have clean domain, theme, and abstraction level values so that filters display correctly.",
+      "acceptanceCriteria": [
+        "normalizeConcept() splits comma-separated domains and takes first value",
+        "abstractionLevel validated against L1_SPECIFIC/L2_APPROACH/L3_PARADIGM with L2_APPROACH default",
+        "themes always a non-empty string[] with 'General' fallback",
+        "Normalization applied at extraction time in concept-extraction.service.ts",
+        "Normalization applied at display time in ConceptsScreen.tsx line 38",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Fix empty content area with auto-clustering",
+      "description": "As a user, I want real pipeline concepts to render in grouped containers so that I can see my extracted concepts.",
+      "acceptanceCriteria": [
+        "Replace clusters=[] with auto-clustering by abstraction level using useMemo",
+        "Cluster labels are human-friendly: L1 — Specific, L2 — Approach, L3 — Paradigm",
+        "Rendering loop uses cluster.conceptIds.includes(c.id) instead of c.clusterId === cluster.id",
+        "No dead-code fallback clause for empty clusters",
+        "Mock data path unchanged",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Restructure FilterPanel as L1/L2/L3 accordion groups",
+      "description": "As a user, I want filters organized by abstraction level with nested domains and themes so that I can filter concepts hierarchically.",
+      "acceptanceCriteria": [
+        "New LevelFilterData and FilterPanelProps interfaces defined",
+        "ConceptsScreen computes levelFilters grouped by abstraction level",
+        "FilterPanel renders Accordion per level with defaultOpen=true",
+        "Each accordion has level-toggle Checkbox independent of expand/collapse",
+        "Domain and theme checkboxes nested under each level",
+        "Empty levels hidden",
+        "Design tokens preserved",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Build verification",
+      "description": "As a developer, I want the build to pass with zero errors so that the fix is production-ready.",
+      "acceptanceCriteria": [
+        "npx tsc --noEmit passes with zero errors",
+        "npm run build succeeds",
+        "No console errors on Concepts screen"
+      ],
+      "priority": 4,
+      "passes": false
+    }
+  ]
+}

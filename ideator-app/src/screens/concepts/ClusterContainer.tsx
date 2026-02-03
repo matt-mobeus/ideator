@@ -16,7 +16,7 @@ export default function ClusterContainer({ cluster, concepts, onConceptClick }: 
       badge={<Badge variant="gray">{concepts.length}</Badge>}
       defaultOpen
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {concepts.map((concept) => (
           <ConceptCard
             key={concept.id}

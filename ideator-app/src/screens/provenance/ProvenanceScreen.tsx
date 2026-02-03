@@ -79,7 +79,7 @@ export default function ProvenanceScreen() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col gap-6">
       <PageHeader
         title={`${concept.name} — Provenance`}
         actions={

@@ -25,11 +25,11 @@ export default function Accordion({ title, badge, defaultOpen = false, children,
           {title}
           {badge}
         </div>
-        <span className={clsx('transition-transform duration-[var(--transition-default)]', open && 'rotate-180')}>
+        <span className={clsx('transition-transform duration-[var(--duration-normal)]', open && 'rotate-180')}>
           <Icon name="chevron-down" size={16} />
         </span>
       </button>
-      {open && <div className="p-4">{children}</div>}
+      {open && <div className="bg-[var(--bg-primary)] p-4">{children}</div>}
     </div>
   )
 }

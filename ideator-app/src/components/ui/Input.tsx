@@ -24,7 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={clsx(
-            'rounded-[var(--radius-md)] border bg-[var(--bg-surface)] px-3 py-2 text-sm outline-none transition-all duration-[var(--transition-default)]',
+            'rounded-[var(--radius-md)] border bg-[var(--bg-surface)] px-3 py-2 text-sm outline-none transition-all duration-[var(--duration-normal)]',
             'placeholder:text-[var(--text-muted)]',
             'focus:border-[var(--border-active)] focus:shadow-[var(--glow-cyan)]',
             error

@@ -35,7 +35,7 @@ const statusTextColors: Record<JobStatus, string> = {
 
 export default function IngestionProgress({ jobs }: IngestionProgressProps) {
   return (
-    <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-4">
+    <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-5">
       {/* Header */}
       <h3 className="text-sm font-medium uppercase tracking-wide" style={{ color: 'var(--text-primary)' }}>
         INGESTION PROGRESS ({jobs.length})

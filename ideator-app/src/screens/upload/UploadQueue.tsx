@@ -37,7 +37,7 @@ export default function UploadQueue({ files, onRemove, onClear }: UploadQueuePro
   const totalSize = files.reduce((sum, file) => sum + file.size, 0)
 
   return (
-    <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-4">
+    <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium uppercase tracking-wide" style={{ color: 'var(--text-primary)' }}>
@@ -54,7 +54,7 @@ export default function UploadQueue({ files, onRemove, onClear }: UploadQueuePro
           <div
             key={index}
             className={clsx(
-              'flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-base)] p-3 transition-all duration-[var(--transition-default)]',
+              'flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-base)] p-3 transition-all duration-[var(--duration-normal)]',
               'hover:border-[var(--color-cyan)] hover:shadow-[var(--glow-cyan-sm)]',
             )}
           >

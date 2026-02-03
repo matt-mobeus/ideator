@@ -21,7 +21,7 @@ export default function Toggle({ checked, onChange, label, disabled, className }
         onClick={() => onChange(!checked)}
         disabled={disabled}
         className={clsx(
-          'relative inline-flex h-5 w-9 items-center rounded-full border transition-colors duration-[var(--transition-default)]',
+          'relative inline-flex h-5 w-9 items-center rounded-full border transition-colors duration-[var(--duration-normal)]',
           checked
             ? 'bg-[var(--color-cyan)] border-[var(--color-cyan)]'
             : 'bg-[var(--bg-surface)] border-[var(--border-default)]',
@@ -29,7 +29,7 @@ export default function Toggle({ checked, onChange, label, disabled, className }
       >
         <span
           className={clsx(
-            'inline-block h-3.5 w-3.5 rounded-full bg-[var(--text-primary)] transition-transform duration-[var(--transition-default)]',
+            'inline-block h-3.5 w-3.5 rounded-full bg-[var(--text-primary)] transition-transform duration-[var(--duration-normal)]',
             checked ? 'translate-x-[18px]' : 'translate-x-[3px]',
           )}
         />

@@ -35,7 +35,7 @@ export default function Button({
   return (
     <button
       className={clsx(
-        'inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border font-medium transition-all duration-[var(--transition-default)]',
+        'inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border font-medium transition-all duration-[var(--duration-normal)]',
         'active:scale-[0.98] disabled:opacity-[var(--opacity-disabled)] disabled:pointer-events-none',
         variantStyles[variant],
         sizeStyles[size],

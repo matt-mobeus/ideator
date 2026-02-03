@@ -21,6 +21,31 @@ interface RawConcept {
   relatedConcepts: string[]
 }
 
+const VALID_LEVELS = ['L1_SPECIFIC', 'L2_APPROACH', 'L3_PARADIGM'] as const
+
+export function normalizeConcept(concept: Concept): Concept {
+  const domain = (concept.domain || 'General')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)[0] || 'General'
+
+  const abstractionLevel = VALID_LEVELS.includes(concept.abstractionLevel as any)
+    ? concept.abstractionLevel
+    : 'L2_APPROACH'
+
+  let themes: string[]
+  if (Array.isArray(concept.themes) && concept.themes.length > 0) {
+    themes = concept.themes.map((t) => t.trim()).filter(Boolean)
+  } else if (typeof concept.themes === 'string' && concept.themes) {
+    themes = (concept.themes as string).split(',').map((t) => t.trim()).filter(Boolean)
+  } else {
+    themes = ['General']
+  }
+  if (themes.length === 0) themes = ['General']
+
+  return { ...concept, domain, abstractionLevel, themes }
+}
+
 export async function extractConcepts(
   text: string,
   sourceRef: SourceRef,
@@ -52,7 +77,7 @@ export async function extractConcepts(
     await storage.put('concepts', concept)
   }
 
-  return concepts
+  return concepts.map(normalizeConcept)
 }
 
 export async function extractFromMultipleFiles(
@@ -79,5 +104,5 @@ export async function extractFromMultipleFiles(
     }
   }
 
-  return Array.from(seen.values())
+  return Array.from(seen.values()).map(normalizeConcept)
 }
