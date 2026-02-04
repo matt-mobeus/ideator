@@ -29,7 +29,7 @@ export function normalizeConcept(concept: Concept): Concept {
     .map((s) => s.trim())
     .filter(Boolean)[0] || 'General'
 
-  const abstractionLevel = VALID_LEVELS.includes(concept.abstractionLevel as any)
+  const abstractionLevel = (VALID_LEVELS as readonly string[]).includes(concept.abstractionLevel)
     ? concept.abstractionLevel
     : 'L2_APPROACH'
 

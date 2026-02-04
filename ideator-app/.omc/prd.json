@@ -1,66 +1,65 @@
 {
-  "project": "Concepts Screen UI/UX Fix",
-  "branchName": "ralph/concepts-ui-fix",
-  "description": "Fix the Concepts screen where real LLM results fail to display: empty content area, malformed domain filters, missing themes/levels, and flat filter hierarchy.",
+  "project": "ConceptsScreen UX Enhancement",
+  "branchName": "ralph/concepts-ux-enhancement",
+  "description": "Transform ConceptsScreen from passive display into interactive workspace with detail panel, smart sidebar navigation, and pipeline status display.",
+  "planPath": ".omc/plans/concepts-ux-enhancement.md",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Normalize LLM concept data",
-      "description": "As a user, I want LLM-extracted concepts to have clean domain, theme, and abstraction level values so that filters display correctly.",
+      "title": "Create ConceptDetailPanel Component",
+      "description": "As a user, I want to click on a concept card and see a detailed side drawer panel so that I can inspect all concept metadata without leaving the concepts page.",
       "acceptanceCriteria": [
-        "normalizeConcept() splits comma-separated domains and takes first value",
-        "abstractionLevel validated against L1_SPECIFIC/L2_APPROACH/L3_PARADIGM with L2_APPROACH default",
-        "themes always a non-empty string[] with 'General' fallback",
-        "Normalization applied at extraction time in concept-extraction.service.ts",
-        "Normalization applied at display time in ConceptsScreen.tsx line 38",
-        "Typecheck passes"
+        "Panel appears on right side with overlay backdrop (z-50/z-51)",
+        "Clicking overlay closes panel",
+        "Close button (X) closes panel",
+        "Escape key closes panel",
+        "Panel slides in from right (~300ms animation)",
+        "Panel receives focus on open",
+        "All concept fields displayed (name, level, domain, themes, description)",
+        "Source References section with Accordion (conditional)",
+        "Related/Parent/Child Concepts sections with Accordion (conditional)",
+        "Action buttons navigate to /analyze/:id, /explore/:id, /provenance/:id",
+        "Typecheck passes (tsc --noEmit)"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-002",
-      "title": "Fix empty content area with auto-clustering",
-      "description": "As a user, I want real pipeline concepts to render in grouped containers so that I can see my extracted concepts.",
+      "title": "Create ConceptsSidebar Component",
+      "description": "As a user, I want an enhanced sidebar with navigation, pipeline status, and filters so that I can navigate contextually and monitor extraction progress.",
       "acceptanceCriteria": [
-        "Replace clusters=[] with auto-clustering by abstraction level using useMemo",
-        "Cluster labels are human-friendly: L1 — Specific, L2 — Approach, L3 — Paradigm",
-        "Rendering loop uses cluster.conceptIds.includes(c.id) instead of c.clusterId === cluster.id",
-        "No dead-code fallback clause for empty clusters",
-        "Mock data path unchanged",
-        "Typecheck passes"
+        "Three collapsible sections using Accordion component",
+        "Navigation section: Upload, Concepts, Results always visible",
+        "Navigation section: Analyze/Explore/Provenance only when concept selected",
+        "Pipeline Status section shows state badge (idle/running/done/error)",
+        "Pipeline Status section shows concept count, domain count, extraction time",
+        "Filters section contains all existing FilterPanel functionality",
+        "Clear filters button works",
+        "LevelFilterData imported from FilterPanel.tsx",
+        "Typecheck passes (tsc --noEmit)"
       ],
-      "priority": 2,
-      "passes": false
+      "priority": 1,
+      "passes": true
     },
     {
       "id": "US-003",
-      "title": "Restructure FilterPanel as L1/L2/L3 accordion groups",
-      "description": "As a user, I want filters organized by abstraction level with nested domains and themes so that I can filter concepts hierarchically.",
+      "title": "Wire Up ConceptsScreen Integration",
+      "description": "As a user, I want clicking concept cards to open the detail panel and the sidebar to reflect my selection so that the UI feels cohesive and responsive.",
       "acceptanceCriteria": [
-        "New LevelFilterData and FilterPanelProps interfaces defined",
-        "ConceptsScreen computes levelFilters grouped by abstraction level",
-        "FilterPanel renders Accordion per level with defaultOpen=true",
-        "Each accordion has level-toggle Checkbox independent of expand/collapse",
-        "Domain and theme checkboxes nested under each level",
-        "Empty levels hidden",
-        "Design tokens preserved",
-        "Typecheck passes"
+        "selectedConcept state added to ConceptsScreen",
+        "Clicking ConceptCard opens ConceptDetailPanel with correct data",
+        "Closing panel clears selectedConcept state",
+        "FilterPanel replaced with ConceptsSidebar",
+        "ConceptsSidebar receives all required props",
+        "onConceptClick passed to ClusterContainer",
+        "Sidebar navigation reflects selected concept",
+        "All existing filter functionality preserved",
+        "Typecheck passes (tsc --noEmit)",
+        "Build passes (npm run build)"
       ],
-      "priority": 3,
-      "passes": false
-    },
-    {
-      "id": "US-004",
-      "title": "Build verification",
-      "description": "As a developer, I want the build to pass with zero errors so that the fix is production-ready.",
-      "acceptanceCriteria": [
-        "npx tsc --noEmit passes with zero errors",
-        "npm run build succeeds",
-        "No console errors on Concepts screen"
-      ],
-      "priority": 4,
-      "passes": false
+      "priority": 2,
+      "passes": true
     }
   ]
 }

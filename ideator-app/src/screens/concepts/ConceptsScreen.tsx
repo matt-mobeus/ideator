@@ -4,7 +4,8 @@ import { pipelineStore } from '@/services/pipeline/store.ts'
 import EmptyState from '@/components/composites/EmptyState.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import { PageHeader, SplitPanel } from '@/components/global'
-import FilterPanel from './FilterPanel.tsx'
+import ConceptsSidebar from './ConceptsSidebar.tsx'
+import ConceptDetailPanel from './ConceptDetailPanel.tsx'
 import ClusterContainer from './ClusterContainer.tsx'
 import { MOCK_CONCEPTS, MOCK_CLUSTERS } from '@/fixtures/concepts-mock-data.ts'
 import { normalizeConcept } from '@/services/concept-extraction.service.ts'
@@ -15,11 +16,18 @@ function unique(arr: string[]): string[] {
   return [...new Set(arr)]
 }
 
+const LEVEL_LABELS: Record<string, string> = {
+  L1_SPECIFIC: 'L1 — Specific',
+  L2_APPROACH: 'L2 — Approach',
+  L3_PARADIGM: 'L3 — Paradigm',
+}
+
 // ── Screen ────────────────────────────────────────────────────────────
 
 export default function ConceptsScreen() {
   const [pipelineState, setPipelineState] = useState<'idle' | 'running' | 'done' | 'error'>('idle')
   const [pipelineConcepts, setPipelineConcepts] = useState<Concept[] | null>(null)
+  const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null)
 
   useEffect(() => {
     const pipelineId = sessionStorage.getItem('active-pipeline-id')
@@ -59,12 +67,6 @@ export default function ConceptsScreen() {
 
   const concepts: Concept[] = pipelineConcepts ?? MOCK_CONCEPTS
 
-  const LEVEL_LABELS: Record<string, string> = {
-    L1_SPECIFIC: 'L1 — Specific',
-    L2_APPROACH: 'L2 — Approach',
-    L3_PARADIGM: 'L3 — Paradigm',
-  }
-
   const clusters: Cluster[] = useMemo(() => {
     if (!pipelineConcepts) return MOCK_CLUSTERS
     const levelGroups = new Map<string, string[]>()
@@ -79,7 +81,7 @@ export default function ConceptsScreen() {
       domain: '',
       conceptIds: ids,
     }))
-  }, [pipelineConcepts, concepts])
+  }, [pipelineConcepts])
 
   const [selectedDomains, setSelectedDomains] = useState<string[]>([])
   const [selectedThemes, setSelectedThemes] = useState<string[]>([])
@@ -115,6 +117,26 @@ export default function ConceptsScreen() {
     setSelectedLevels([])
   }
 
+  const domainCount = useMemo(() => {
+    const domains = new Set(concepts.map(c => c.domain).filter(Boolean))
+    return domains.size
+  }, [concepts])
+
+  const extractionTime = useMemo(() => {
+    if (pipelineConcepts && pipelineConcepts.length > 0) {
+      return pipelineConcepts[0].extractionTimestamp
+    }
+    return undefined
+  }, [pipelineConcepts])
+
+  const handleConceptClick = (concept: Concept) => {
+    setSelectedConcept(concept)
+  }
+
+  const handleCloseDetail = () => {
+    setSelectedConcept(null)
+  }
+
   if (concepts.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -146,7 +168,12 @@ export default function ConceptsScreen() {
 
       <SplitPanel
         sidebar={
-          <FilterPanel
+          <ConceptsSidebar
+            selectedConceptId={selectedConcept?.id ?? null}
+            pipelineState={pipelineState}
+            conceptCount={filtered.length}
+            domainCount={domainCount}
+            extractionTime={extractionTime}
             levelFilters={levelFilters}
             selectedDomains={selectedDomains}
             selectedThemes={selectedThemes}
@@ -164,13 +191,15 @@ export default function ConceptsScreen() {
           ) : (
             clusters
               .map((cluster) => {
-                const clusterConcepts = filtered.filter((c) => cluster.conceptIds.includes(c.id))
+                const idSet = new Set(cluster.conceptIds)
+                const clusterConcepts = filtered.filter((c) => idSet.has(c.id))
                 if (clusterConcepts.length === 0) return null
                 return (
                   <ClusterContainer
                     key={cluster.id}
                     cluster={cluster}
                     concepts={clusterConcepts}
+                    onConceptClick={handleConceptClick}
                   />
                 )
               })
@@ -178,6 +207,14 @@ export default function ConceptsScreen() {
           )}
         </div>
       </SplitPanel>
+
+      {selectedConcept && (
+        <ConceptDetailPanel
+          concept={selectedConcept}
+          allConcepts={concepts}
+          onClose={handleCloseDetail}
+        />
+      )}
     </div>
   )
 }
